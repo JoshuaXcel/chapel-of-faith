@@ -3,8 +3,11 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.routers import auth
+
 
 app = FastAPI(title="Chapel of Faith API")
+app.include_router(auth.router)
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):
