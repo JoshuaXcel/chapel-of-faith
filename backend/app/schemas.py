@@ -58,7 +58,9 @@ class EventOut(BaseModel):
     id: int
     title: str
     description: str | None
-    event_date: date
-    location: str | None
+    location: str
+    starts_at: datetime
+    ends_at: datetime | None
+    image_url: str | None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

@@ -16,8 +16,7 @@ def get_leadership(db: Session = Depends(get_db)):
 
 @router.get("/{member_id}", response_model=LeadershipOut)
 def get_leadership_member(member_id: int, db: Session = Depends(get_db)):
-    stmt = select(Leadership).where(Leadership.id == member_id)
-    leadership_member = db.execute(stmt).scalar_one_or_none()
+    leadership_member = db.get(Leadership, member_id)
     if leadership_member is None:
         raise HTTPException(status_code=404, detail="Leadership member not found")
     return leadership_member
