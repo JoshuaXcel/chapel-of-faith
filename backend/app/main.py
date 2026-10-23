@@ -3,11 +3,15 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.routers import auth, sermons
+from app.routers import auth, sermons, devotions, events, leadership, gallery
 
 app = FastAPI(title="Chapel of Faith API")
 app.include_router(auth.router)
 app.include_router(sermons.router)
+app.include_router(devotions.router)
+app.include_router(events.router)
+app.include_router(leadership.router)
+app.include_router(gallery.router)
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):

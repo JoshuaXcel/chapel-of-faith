@@ -27,3 +27,40 @@ class SermonOut(BaseModel):
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+class DevotionOut(BaseModel):
+    id: int
+    title: str
+    scripture: str
+    body: str
+    author: str | None
+    devotion_date: date
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class LeadershipOut(BaseModel):
+    id: int
+    name: str
+    role: str
+    bio: str | None
+    photo_url: str | None
+    display_order: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class GalleryImageOut(BaseModel):
+    id: int
+    image_url: str
+    caption: str | None
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+    
+class EventOut(BaseModel):
+    id: int
+    title: str
+    description: str | None
+    location: str
+    starts_at: datetime
+    ends_at: datetime | None
+    image_url: str | None
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
