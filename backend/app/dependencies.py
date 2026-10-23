@@ -30,20 +30,14 @@ def get_current_admin(
         raise credentials_error
     return admin
 
+def require_role(*roles: str):
+    def checker(admin: Admin = Depends(get_current_admin)) -> Admin:
+        if admin.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not enough permissions",
+            )
+        return admin
+    return checker
 
 
-
-
-
-
-
-"""1. New file app/dependencies.py
-* bearer = HTTPBearer(auto_error=False) (from fastapi.security). auto_error=False means WE decide the error, so it's always 401.
-* function get_current_admin(credentials = Depends(bearer), db = Depends(get_db)) → returns Admin. Same def/async style as your login.
-* Steps inside:
-  - no credentials → 401
-  - payload = decode_token(credentials.credentials); None → 401
-  - admin = db.get(Admin, int(payload["sub"])) (sub is a string in the token)
-  - admin missing OR not is_active → 401
-  - return admin
-* Every 401: detail "Could not validate credentials", headers={"WWW-Authenticate": "Bearer"}. Tip: make one exception at the top and raise it each time."""
