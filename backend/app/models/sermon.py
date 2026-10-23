@@ -16,7 +16,7 @@ class Sermon(Base):
 
     preacher: Mapped[str] = mapped_column(String(120), nullable=False)
 
-    preached_on: Mapped[date] 
+    preached_on: Mapped[date] = mapped_column(nullable=False)
     
     scripture: Mapped[str | None] = mapped_column(String(120), nullable=True)
     
