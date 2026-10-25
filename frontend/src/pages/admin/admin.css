@@ -106,7 +106,7 @@
 }
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(5,1fr);
   gap: 16px;
 }
 .stat {
@@ -416,6 +416,26 @@
 /* Let grid columns shrink, so a wide table scrolls instead of pushing the form off screen */
 .ed-grid > * {
   min-width: 0;
+}
+
+/* Members page: the table has 7 columns, so slightly less space around each cell */
+.tbl-tight th,
+.tbl-tight td {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+/* Members page: small tag beside a name when they asked to join the WhatsApp groups */
+.wa-tag {
+  display: block;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 2px 9px;
+  border-radius: var(--pill);
+  background: var(--success-50);
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* Phones and small tablets: the sidebar becomes a bar on top */

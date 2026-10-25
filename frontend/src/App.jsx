@@ -10,6 +10,7 @@ import Gallery from './pages/Gallery.jsx'
 import Give from './pages/Give.jsx'
 import Prayer from './pages/Prayer.jsx'
 import Contact from './pages/Contact.jsx'
+import Membership from './pages/Membership.jsx'
 import SermonDetail from './pages/SermonDetail.jsx'
 import EventDetail from './pages/EventDetail.jsx'
 import DevotionDetail from './pages/DevotionDetail.jsx'
@@ -23,6 +24,7 @@ import AdminSermons from './pages/admin/AdminSermons.jsx'
 import AdminDevotions from './pages/admin/AdminDevotions.jsx'
 import AdminLeadership from './pages/admin/AdminLeadership.jsx'
 import AdminGallery from './pages/admin/AdminGallery.jsx'
+import AdminMembers from './pages/admin/AdminMembers.jsx'
 
 // App decides which page to show for each URL.
 // Public pages sit inside the Layout route, so they get the Navbar and Footer.
@@ -45,6 +47,7 @@ function App() {
         <Route path="/give" element={<Give />} />
         <Route path="/prayer" element={<Prayer />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/membership" element={<Membership />} />
         {/* "*" matches any other URL, so unknown pages show the 404 page */}
         <Route path="*" element={<NotFound />} />
       </Route>
@@ -66,6 +69,7 @@ function App() {
         <Route path="devotions" element={<AdminDevotions />} />
         <Route path="leadership" element={<AdminLeadership />} />
         <Route path="gallery" element={<AdminGallery />} />
+        <Route path="members" element={<AdminMembers />} />
       </Route>
     </Routes>
   )

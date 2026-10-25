@@ -14,6 +14,7 @@ const links = [
   { to: '/gallery', label: 'Gallery', icon: 'image' },
   { to: '/prayer', label: 'Prayer request', icon: 'message' },
   { to: '/contact', label: 'Contact', icon: 'mapPin' },
+  { to: '/membership', label: 'Become a member', icon: 'userPlus' },
 ]
 
 // Full-screen menu for phones. Navbar shows it when the menu button is tapped.

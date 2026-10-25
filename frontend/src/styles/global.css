@@ -671,6 +671,10 @@ section {
 .wrapx {
   flex-wrap: wrap;
 }
+/* keeps a short piece of text (a time, a phone number) on one line */
+.nowrap {
+  white-space: nowrap;
+}
 .center {
   text-align: center;
 }

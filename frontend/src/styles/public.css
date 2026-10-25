@@ -880,6 +880,69 @@ button.amt { cursor: pointer; }
 .not-found-actions { justify-content: center; }
 .detail .error-box { margin-top: 24px; }
 
+/* Home: membership band ("Make it official", components/MembershipBand.jsx) */
+.member-band {
+  display: grid;
+  grid-template-columns: 1.3fr .9fr;
+  gap: 56px;
+  align-items: center;
+  padding: 64px;
+  border-radius: 36px;
+  background: radial-gradient(70% 90% at 100% 0%, var(--gold-100), transparent 65%), var(--gold-50);
+  border: 1px solid var(--gold-100);
+}
+.member-band .lead {
+  max-width: 560px;
+}
+.member-benefits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.member-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px 14px 14px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--sh-1);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Membership form (pages/Membership.jsx) */
+.req {
+  color: var(--danger);
+}
+.field-error {
+  font-size: 14px;
+  color: var(--danger);
+}
+.input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+/* the WhatsApp groups tick box and its sentence, side by side */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.check-row input {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  accent-color: var(--plum-600);
+}
+.member-done h3 {
+  font-size: 32px;
+}
+
 /* Contact: a day with several activities shows each on its own line */
 .kv-line {
   display: block;
@@ -905,6 +968,8 @@ button.amt { cursor: pointer; }
   .ev .ph { height: 150px; }
   .gal { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 150px 150px; gap: 12px; }
   .gal .ph:first-child { grid-row: auto; grid-column: span 2; }
+  .member-band { grid-template-columns: 1fr; padding: 36px 24px; border-radius: 28px; gap: 28px; }
+  .member-band .btn { width: 100%; }
   .give-band { grid-template-columns: 1fr; padding: 36px 24px; border-radius: 28px; gap: 32px; }
   .give-band blockquote { font-size: 26px; }
   .about-grid { gap: 40px; }

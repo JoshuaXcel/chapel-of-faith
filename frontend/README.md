@@ -56,17 +56,19 @@ frontend/
     ├── useFetch.js       A hook pages use to load data: { data, loading, error }
     ├── format.js         Turns backend dates into friendly text ("Sunday, 4 October 2026")
     ├── devotions.js      Picks today's devotion and hides future-dated ones
-    ├── siteInfo.js       Church details (address, phone, social links) in one place
+    ├── siteInfo.js       Church details (address, phone, social links) and the weekly
+    │                     activities (days + times) in one place
     ├── assets/           The crest image and the fonts
     ├── styles/
     │   ├── global.css    Design tokens (colours, fonts, spacing) + buttons, cards, forms
     │   └── public.css    Styles for the sections of the public pages
     ├── components/       Reusable pieces: Navbar, MobileMenu, Footer, Button, Card,
-    │                     Photo, PageHeader, Loading, ErrorMessage, ProtectedRoute, ...
+    │                     Photo, PageHeader, Loading, ErrorMessage, ProtectedRoute,
+    │                     WeeklyActivities, MembershipBand, ...
     ├── pages/            One file per public page: Home, About, Sermons, SermonDetail, ...
     │   └── admin/        The staff area: Login, AdminLayout (sidebar), Dashboard,
     │                     AdminEvents, AdminSermons, AdminDevotions, AdminLeadership,
-    │                     AdminGallery, ImageUpload, admin.css
+    │                     AdminGallery, AdminMembers, ImageUpload, admin.css
     └── tests/            Tests (Vitest + React Testing Library)
 ```
 
@@ -103,6 +105,28 @@ Images uploaded to the backend are saved as paths like `/media/abc.jpg`.
    login page.
 
 Admin accounts are created on the backend (there is no sign-up page).
+
+## Weekly activities (service times)
+
+The days and times of the weekly activities (Pre-service Prayer, Bible Study, Sunday
+Service, CYF, Midweek Service) are written **once**, in `weeklyActivities` in
+`src/siteInfo.js`. The Home page section (`components/WeeklyActivities.jsx`), the Footer,
+the phone menu, and the Events, Contact and Ministries pages all read from that list,
+so to change a time you edit that one file.
+
+## Membership registration
+
+- `/membership` (`pages/Membership.jsx`) is a public form. It checks the fields in the
+  browser first (full name and phone are required), then sends them with
+  `post('/members', ...)`. The backend saves them in the `members` table.
+- The Home page has a "Make it official" band (`components/MembershipBand.jsx`) that
+  links to the form. The Footer and the phone menu link to it too.
+- Admins see the registrations at `/admin/members` (`pages/admin/AdminMembers.jsx`),
+  newest first, and can delete one. The Dashboard shows how many there are.
+- The backend part (the `members` table, its migration and the `/members` endpoints)
+  is in its own pull request. Until that is merged and you have run
+  `alembic upgrade head`, the form shows an error when submitted and the Members page
+  shows "Not Found".
 
 ## Not connected yet
 

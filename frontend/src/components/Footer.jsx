@@ -53,7 +53,8 @@ function Footer() {
             <ul>
               {allActivities.map((activity) => (
                 <li key={activity.day + activity.name}>
-                  {activity.name} · {activity.short} {activity.time}
+                  {/* nowrap keeps "Sun 8:00 AM" together if the line wraps */}
+                  {activity.name} · <span className="nowrap">{activity.short} {activity.time}</span>
                 </li>
               ))}
             </ul>
@@ -62,6 +63,7 @@ function Footer() {
           <div>
             <h5>Quick links</h5>
             <ul>
+              <li><Link to="/membership">Become a member</Link></li>
               <li><Link to="/give">Give online</Link></li>
               <li><Link to="/prayer">Prayer request</Link></li>
               <li><Link to="/devotion">Daily devotion</Link></li>

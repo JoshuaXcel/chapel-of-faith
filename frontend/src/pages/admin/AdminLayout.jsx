@@ -12,6 +12,7 @@ const links = [
   { to: '/admin/devotions', label: 'Devotions', icon: 'sun' },
   { to: '/admin/leadership', label: 'Leadership', icon: 'users' },
   { to: '/admin/gallery', label: 'Gallery', icon: 'image' },
+  { to: '/admin/members', label: 'Members', icon: 'userPlus' },
 ]
 
 // The frame around every admin page: sidebar on the left, the page on the right.

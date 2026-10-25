@@ -11,6 +11,7 @@ function Dashboard() {
   const devotions = useFetch('/devotions')
   const leaders = useFetch('/leadership')
   const gallery = useFetch('/gallery')
+  const members = useFetch('/members')
 
   // Shows "…" while a list is still loading
   function count(result) {
@@ -25,6 +26,13 @@ function Dashboard() {
     { label: 'Sermons', icon: 'headphones', value: count(sermons), to: '/admin/sermons' },
     { label: 'Devotions', icon: 'sun', value: count(devotions), to: '/admin/devotions' },
     { label: 'Leaders', icon: 'users', value: count(leaders), to: '/admin/leadership' },
+    // "—" if the members list could not load (its own page shows the reason)
+    {
+      label: 'Members',
+      icon: 'userPlus',
+      value: members.error ? '—' : count(members),
+      to: '/admin/members',
+    },
   ]
 
   // Show the first error, if any list failed to load

@@ -6,6 +6,7 @@ import Loading from '../components/Loading.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import EventCard from '../components/EventCard.jsx'
 import WeeklyActivities from '../components/WeeklyActivities.jsx'
+import MembershipBand from '../components/MembershipBand.jsx'
 import SermonPlayer from '../components/SermonPlayer.jsx'
 import useFetch from '../useFetch.js'
 import { mediaUrl } from '../api.js'
@@ -91,6 +92,9 @@ function Home() {
 
       {/* Weekly activities: every day's activities and times (from siteInfo.js) */}
       <WeeklyActivities />
+
+      {/* "Make it official": invites people to register as members */}
+      <MembershipBand />
 
       {/* Shortcuts */}
       <section className="sec-sm paths-section">
