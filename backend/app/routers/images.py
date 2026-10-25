@@ -7,7 +7,7 @@ router = APIRouter(prefix="/images", tags=["images"])
 
 MEDIA_DIR = Path("media")
 
-allowed_types = {
+ALLOWED_TYPES = {
     "image/jpeg": ".jpg",
     "image/png": ".png",
     "image/webp": ".webp"
