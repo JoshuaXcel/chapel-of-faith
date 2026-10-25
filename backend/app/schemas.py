@@ -64,3 +64,20 @@ class EventOut(BaseModel):
     image_url: str | None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class EventCreate(BaseModel):
+    title: str
+    description: str | None = None
+    location: str
+    starts_at: datetime
+    ends_at: datetime | None = None
+    image_url: str | None = None
+
+class EventUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    location: str | None = None
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+    image_url: str | None = None
+
