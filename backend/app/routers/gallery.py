@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.gallery import GalleryImage
-from app.schemas import GalleryImageOut
+from app.schemas import GalleryImageOut, GalleryImageCreate, GalleryImageUpdate
+from app.dependencies import require_role
 
 router = APIRouter(prefix="/gallery", tags=["gallery"])
 

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Sermon
-from app.schemas import SermonOut
+from app.schemas import SermonOut, SermonCreate, SermonUpdate
+from app.dependencies import require_role
 
 router = APIRouter(prefix="/sermons", tags=["sermons"])
 

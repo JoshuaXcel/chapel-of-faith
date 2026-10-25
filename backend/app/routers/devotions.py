@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -6,7 +6,8 @@ from datetime import date
 
 from app.database import get_db
 from app.models.devotion import Devotion
-from app.schemas import DevotionOut
+from app.schemas import DevotionOut, DevotionCreate, DevotionUpdate
+from app.dependencies import require_role
 
 router = APIRouter(prefix="/devotions", tags=["devotions"])
 
