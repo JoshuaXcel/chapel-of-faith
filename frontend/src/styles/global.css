@@ -844,6 +844,17 @@ textarea.input {
   cursor: not-allowed;
 }
 
+/* A switched-off form (<fieldset disabled>) greys out its button too */
+fieldset {
+  border: none;
+  min-width: 0;
+}
+fieldset:disabled .btn {
+  background: var(--sand-2);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
 /* Keyboard users can see where they are */
 a:focus-visible, button:focus-visible {
   outline: 3px solid var(--gold-400);
