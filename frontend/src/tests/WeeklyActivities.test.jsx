@@ -13,7 +13,8 @@ describe('WeeklyActivities section', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('heading', { name: /every week/i })).toBeInTheDocument()
+    // \s also matches the non-breaking space between "every" and "week"
+    expect(screen.getByRole('heading', { name: /every\sweek/i })).toBeInTheDocument()
 
     // Find each day's card by its heading, then look only inside that card
     const card = (day) => screen.getByRole('heading', { name: day }).closest('article')
