@@ -18,7 +18,7 @@ class Leadership(Base):
 
     photo_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
-    display_order: Mapped[int] = mapped_column(nullable=False, default=0)
+    display_order: Mapped[int] = mapped_column(nullable=False, server_default="0")
 
     created_at: Mapped[datetime] = mapped_column(server_default=func.now(), nullable=False)
 
