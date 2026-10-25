@@ -18,6 +18,11 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Login from './pages/admin/Login.jsx'
 import AdminLayout from './pages/admin/AdminLayout.jsx'
 import Dashboard from './pages/admin/Dashboard.jsx'
+import AdminEvents from './pages/admin/AdminEvents.jsx'
+import AdminSermons from './pages/admin/AdminSermons.jsx'
+import AdminDevotions from './pages/admin/AdminDevotions.jsx'
+import AdminLeadership from './pages/admin/AdminLeadership.jsx'
+import AdminGallery from './pages/admin/AdminGallery.jsx'
 
 // App decides which page to show for each URL.
 // Public pages sit inside the Layout route, so they get the Navbar and Footer.
@@ -56,6 +61,11 @@ function App() {
       >
         {/* "index" = the page shown at /admin itself */}
         <Route index element={<Dashboard />} />
+        <Route path="events" element={<AdminEvents />} />
+        <Route path="sermons" element={<AdminSermons />} />
+        <Route path="devotions" element={<AdminDevotions />} />
+        <Route path="leadership" element={<AdminLeadership />} />
+        <Route path="gallery" element={<AdminGallery />} />
       </Route>
     </Routes>
   )

@@ -9,7 +9,8 @@
   display: grid;
   grid-template-columns: 260px 1fr;
   min-height: 100vh;
-  background: #f7f4ef;
+  /* white strip + thin line behind the sidebar, so it reaches the bottom of long pages */
+  background: linear-gradient(to right, #fff 259px, var(--line) 259px, var(--line) 260px, #f7f4ef 260px);
 }
 .side {
   background: #fff;
@@ -301,9 +302,131 @@
   align-self: center;
 }
 
+/* Admin pages: lists and forms */
+.notice {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--success-50);
+  color: var(--success);
+  font-size: 15px;
+  font-weight: 500;
+}
+.note.warn {
+  background: var(--gold-50);
+  border: 1px solid var(--gold-100);
+}
+.note.warn a {
+  color: var(--plum-700);
+  font-weight: 600;
+  text-decoration: underline;
+}
+.panel .loading,
+.panel .error-box,
+.panel-empty {
+  margin: 20px 22px;
+}
+.panel-empty {
+  color: var(--ink-3);
+}
+/* Wide tables scroll sideways on small screens instead of squashing */
+.table-scroll {
+  overflow-x: auto;
+}
+.tbl td.strong,
+.tbl .strong {
+  font-weight: 600;
+}
+.tbl td.actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.tbl td.actions .iconbtn {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.iconbtn.danger:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.thumb {
+  width: 64px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.thumb.round {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.drawer-title {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.drawer .input {
+  height: 48px;
+  font-size: 15px;
+}
+.drawer textarea.input {
+  height: 120px;
+}
+.drawer textarea.input.tall {
+  height: 260px;
+}
+
+/* Image upload box */
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.upload-preview,
+.upload-empty {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.upload-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--line-2);
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+/* Dashboard */
+.stat:hover {
+  border-color: var(--plum-300);
+}
+.dash-h {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+  margin: 32px 0 14px;
+}
+.qa a .icon-tile {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.qa a:hover {
+  border-color: var(--plum-300);
+}
+
+/* Let grid columns shrink, so a wide table scrolls instead of pushing the form off screen */
+.ed-grid > * {
+  min-width: 0;
+}
+
 /* Phones and small tablets: the sidebar becomes a bar on top */
 @media (max-width: 900px) {
-  .adm { grid-template-columns: 1fr; }
+  .adm { grid-template-columns: 1fr; background: #f7f4ef; }
   .side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px; padding: 12px; border-right: none; border-bottom: 1px solid var(--line); }
   .side .brand { padding: 4px 8px; width: 100%; }
   .side .grp { display: none; }
@@ -313,5 +436,7 @@
   .topbar { flex-direction: column; align-items: flex-start; }
   .stat-grid, .qa { grid-template-columns: 1fr 1fr; }
   .ed-grid { grid-template-columns: 1fr; }
+  .ed-grid .drawer { order: -1; } /* show the form above the list on phones */
   .login-card { padding: 28px; }
+  .tbl th, .tbl td { padding: 12px 14px; }
 }

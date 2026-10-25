@@ -1101,7 +1101,6 @@ a.ev-row:hover { border-color: var(--plum-300); }
 .big-pad { padding: 40px; }
 .flat-card { box-shadow: none; }
 .semi { font-weight: 600; }
-.field-label { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .gtabs button { height: 48px; border-radius: 13px; font-weight: 600; font-size: 15px; color: var(--ink-2); }
 .gtabs button.on { background: #fff; color: var(--plum-700); box-shadow: var(--sh-1); }
 button.amt { cursor: pointer; }

@@ -823,6 +823,17 @@ section {
   color: var(--gold-400);
 }
 
+/* A label for a group of controls (not a single input) */
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.field-label small {
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
 /* Real form inputs (the design draws them as boxes; these make actual <input>s match) */
 input.input, select.input, textarea.input {
   width: 100%;
