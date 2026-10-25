@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import date, datetime
 
 class LoginRequest(BaseModel):
@@ -81,6 +81,14 @@ class EventUpdate(BaseModel):
     ends_at: datetime | None = None
     image_url: str | None = None
 
+    # these fields can't be empty in the database, so null gives 422 instead of a 500
+    @field_validator("title", "location", "starts_at")
+    @classmethod
+    def reject_null(cls, value):
+        if value is None:
+            raise ValueError("cannot be null")
+        return value
+
 class SermonCreate(BaseModel):
     title: str
     description: str | None = None
@@ -97,6 +105,14 @@ class SermonUpdate(BaseModel):
     scripture: str | None = None
     audio_url: str | None = None
 
+    # these fields can't be empty in the database, so null gives 422 instead of a 500
+    @field_validator("title", "preacher", "preached_on")
+    @classmethod
+    def reject_null(cls, value):
+        if value is None:
+            raise ValueError("cannot be null")
+        return value
+
 class DevotionCreate(BaseModel):
     title: str
     scripture: str
@@ -110,6 +126,14 @@ class DevotionUpdate(BaseModel):
     body: str | None = None
     devotion_date: date | None = None
     author: str | None = None
+
+    # these fields can't be empty in the database, so null gives 422 instead of a 500
+    @field_validator("title", "scripture", "body", "devotion_date")
+    @classmethod
+    def reject_null(cls, value):
+        if value is None:
+            raise ValueError("cannot be null")
+        return value
 
 class LeadershipCreate(BaseModel):
     name: str
@@ -125,6 +149,14 @@ class LeadershipUpdate(BaseModel):
     photo_url: str | None = None
     display_order: int | None = None
 
+    # these fields can't be empty in the database, so null gives 422 instead of a 500
+    @field_validator("name", "role", "display_order")
+    @classmethod
+    def reject_null(cls, value):
+        if value is None:
+            raise ValueError("cannot be null")
+        return value
+
 class GalleryImageCreate(BaseModel):
     image_url: str
     caption: str | None = None
@@ -132,3 +164,11 @@ class GalleryImageCreate(BaseModel):
 class GalleryImageUpdate(BaseModel):
     image_url: str | None = None
     caption: str | None = None
+
+    # these fields can't be empty in the database, so null gives 422 instead of a 500
+    @field_validator("image_url")
+    @classmethod
+    def reject_null(cls, value):
+        if value is None:
+            raise ValueError("cannot be null")
+        return value
