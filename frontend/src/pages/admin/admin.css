@@ -3,7 +3,6 @@
   dashboard numbers, tables and the edit forms.
 */
 
-
 /* Page layout: sidebar on the left, content on the right */
 .adm {
   display: grid;
@@ -227,10 +226,6 @@
   background: var(--gold-100);
   color: var(--gold-700);
 }
-.st-new {
-  background: var(--plum-100);
-  color: var(--plum-700);
-}
 .ed-grid {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -244,7 +239,6 @@
   padding: 24px;
   box-shadow: var(--sh-2);
 }
-
 
 /* Sidebar extras */
 /* Keep the sidebar in view while a long page scrolls */
