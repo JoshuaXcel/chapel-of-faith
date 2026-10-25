@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import date, datetime
 
 class LoginRequest(BaseModel):
@@ -172,3 +172,39 @@ class GalleryImageUpdate(BaseModel):
         if value is None:
             raise ValueError("cannot be null")
         return value
+
+# membership form: full_name and phone are required, the rest is optional.
+# max_length matches the column sizes in models/member.py, so long text gives 422 instead of a 500
+class MemberCreate(BaseModel):
+    full_name: str = Field(min_length=1, max_length=120)
+    phone: str = Field(min_length=1, max_length=30)
+    email: str | None = Field(default=None, max_length=255)
+    gender: str | None = Field(default=None, max_length=20)
+    department: str | None = Field(default=None, max_length=120)
+    level: str | None = Field(default=None, max_length=20)
+    hostel_or_address: str | None = Field(default=None, max_length=255)
+    birthday: date | None = None
+    joined_whatsapp_consent: bool = False
+
+    # "   " is not a name or a phone number
+    @field_validator("full_name", "phone")
+    @classmethod
+    def reject_blank(cls, value):
+        value = value.strip()
+        if not value:
+            raise ValueError("cannot be blank")
+        return value
+
+class MemberOut(BaseModel):
+    id: int
+    full_name: str
+    phone: str
+    email: str | None
+    gender: str | None
+    department: str | None
+    level: str | None
+    hostel_or_address: str | None
+    birthday: date | None
+    joined_whatsapp_consent: bool
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)

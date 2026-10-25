@@ -3,6 +3,7 @@ from app.models.devotion import Devotion
 from app.models.event import Event
 from app.models.gallery import GalleryImage
 from app.models.leadership import Leadership
+from app.models.member import Member
 from app.models.message import Message
 from app.models.sermon import Sermon
 from app.models.subscriber import Subscriber

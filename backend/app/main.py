@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 
 from app.database import get_db
-from app.routers import auth, sermons, devotions, events, leadership, gallery, images
+from app.routers import auth, sermons, devotions, events, leadership, gallery, images, members
 
 app = FastAPI(title="Chapel of Faith API")
 Path("media").mkdir(exist_ok=True)
@@ -18,6 +18,7 @@ app.include_router(events.router)
 app.include_router(leadership.router)
 app.include_router(gallery.router)
 app.include_router(images.router)
+app.include_router(members.router)
 
 
 @app.get("/health")
