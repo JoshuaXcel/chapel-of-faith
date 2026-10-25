@@ -8,13 +8,10 @@ import ErrorMessage from '../components/ErrorMessage.jsx'
 import useFetch from '../useFetch.js'
 import { mediaUrl } from '../api.js'
 import { dateTile, longDate, monthYear, time } from '../format.js'
+import { CHURCH, allActivities } from '../siteInfo.js'
 
-// Services that happen every week (fixed, not stored in the backend)
-const weekly = [
-  { day: 'Sun', title: 'Sunday Service', when: 'Every Sunday · 9:00 AM' },
-  { day: 'Tue', title: 'CYF Service', when: 'Every Tuesday · 6:00 PM' },
-  { day: '—', title: 'Midweek Service', when: 'Time to be announced' },
-]
+// Activities that happen every week are fixed (not stored in the backend).
+// They come from weeklyActivities in siteInfo.js, flattened into one list.
 
 // Put events into groups by month: [{ month: "November 2026", events: [...] }, ...]
 // The backend already sends them in date order, so we only start a new group
@@ -92,22 +89,22 @@ function Events() {
         <div className="wrap">
           <div className="month">Every week</div>
           <div className="stack g12">
-            {weekly.map((service) => (
-              <div key={service.title} className="ev-row">
+            {allActivities.map((activity) => (
+              <div key={activity.day + activity.name} className="ev-row">
                 <span className="datetile gold">
-                  <b>{service.day}</b>
+                  <b>{activity.short}</b>
                   <span>Weekly</span>
                 </span>
                 <div>
-                  <h3 className="ev-title">{service.title}</h3>
+                  <h3 className="ev-title">{activity.name}</h3>
                   <div className="ev-where">
                     <span className="flex g8">
                       <Icon name="clock" size={16} />
-                      {service.when}
+                      Every {activity.day} · {activity.time}
                     </span>
                     <span className="flex g8">
                       <Icon name="mapPin" size={16} />
-                      Chapel of Faith Auditorium
+                      {CHURCH.venue}
                     </span>
                   </div>
                 </div>

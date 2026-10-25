@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon.jsx'
-import { CHURCH, SOCIAL_LINKS } from '../siteInfo.js'
+import { CHURCH, SOCIAL_LINKS, allActivities } from '../siteInfo.js'
 import emblem from '../assets/emblem.png'
 import './Footer.css'
 
@@ -48,11 +48,14 @@ function Footer() {
           </div>
 
           <div>
-            <h5>Service times</h5>
+            <h5>Weekly activities</h5>
+            {/* Comes from weeklyActivities in siteInfo.js */}
             <ul>
-              <li>Sunday Service · 9:00 AM</li>
-              <li>CYF Service · Tue 6:00 PM</li>
-              <li>Midweek Service · to be announced</li>
+              {allActivities.map((activity) => (
+                <li key={activity.day + activity.name}>
+                  {activity.name} · {activity.short} {activity.time}
+                </li>
+              ))}
             </ul>
           </div>
 

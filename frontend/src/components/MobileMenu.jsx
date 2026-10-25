@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon.jsx'
-import { SOCIAL_LINKS } from '../siteInfo.js'
+import { SOCIAL_LINKS, mainService } from '../siteInfo.js'
 import emblem from '../assets/emblem.png'
 import './MobileMenu.css'
 
@@ -39,7 +39,9 @@ function MobileMenu({ onClose }) {
           <span className="chip chip-dark">Off air</span>
           <b>Watch live</b>
         </span>
-        <span className="small">Sun 9:00 AM</span>
+        <span className="small">
+          {mainService.short} {mainService.time}
+        </span>
       </Link>
 
       <nav className="mm-nav" aria-label="Mobile">

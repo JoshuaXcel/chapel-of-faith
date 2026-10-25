@@ -3,6 +3,11 @@ import Icon from '../components/Icon.jsx'
 import Photo from '../components/Photo.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import ComingSoon from '../components/ComingSoon.jsx'
+import { allActivities, mainService } from '../siteInfo.js'
+
+// The CYF meeting from the weekly list in siteInfo.js (the item named "CYF…"),
+// so its day and time are only typed in one place
+const cyf = allActivities.find((activity) => activity.name.startsWith('CYF'))
 
 const cyfActivities = [
   { icon: 'book', label: 'Bible study' },
@@ -56,10 +61,12 @@ function Ministries() {
                 friendship.
               </p>
               <dl className="kv mt32">
-                <dt>Tuesdays</dt>
-                <dd>6:00 PM · CYF Service</dd>
-                <dt>Sundays</dt>
-                <dd>9:00 AM · with the Chapel</dd>
+                <dt>{cyf.day}s</dt>
+                <dd>
+                  {cyf.time} · {cyf.name}
+                </dd>
+                <dt>{mainService.day}s</dt>
+                <dd>{mainService.time} · with the Chapel</dd>
                 <dt>Where</dt>
                 <dd>Chapel of Faith Auditorium</dd>
               </dl>

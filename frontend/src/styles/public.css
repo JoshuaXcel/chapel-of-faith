@@ -105,52 +105,6 @@
   quotes: none;
 }
 
-/* Home: service times */
-.times {
-  display: grid;
-  grid-template-columns: repeat(3,1fr) 1.15fr;
-  gap: 16px;
-}
-.time-card {
-  padding: 28px;
-  border-radius: var(--r-lg);
-  background: #fff;
-  border: 1px solid var(--line);
-}
-.time-card .k {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--plum-600);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-.time-card .v {
-  font-family: var(--serif);
-  font-size: 34px;
-  margin-top: 18px;
-  line-height: 1.05;
-  letter-spacing: -.02em;
-}
-.time-card .d {
-  margin-top: 8px;
-  color: var(--ink-2);
-  font-size: 15.5px;
-}
-.time-card.venue {
-  background: var(--plum-900);
-  color: #fff;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.time-card.venue .k {
-  color: var(--gold-400);
-}
-
 /* Home: "I want to…" shortcuts */
 .paths {
   display: grid;
@@ -427,9 +381,6 @@
 .hero-media .ph {
   align-items: flex-start;
   justify-content: flex-end;
-}
-.time-card.venue .link {
-  color: var(--gold-400);
 }
 
 /* About: leaders */
@@ -839,8 +790,6 @@
 .hero-title { margin-top: 26px; }
 .float-card .label { font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 .float-card .float-title { font-weight: 600; font-size: 17px; margin-top: 4px; }
-.time-card .v-small { font-size: 26px; }
-.venue-name { font-family: var(--serif); font-size: 24px; margin-top: 16px; line-height: 1.2; }
 .paths-section { padding-top: 8px; }
 .paths-title { margin-bottom: 24px; }
 .path b .i { flex: none; }
@@ -931,6 +880,11 @@ button.amt { cursor: pointer; }
 .not-found-actions { justify-content: center; }
 .detail .error-box { margin-top: 24px; }
 
+/* Contact: a day with several activities shows each on its own line */
+.kv-line {
+  display: block;
+}
+
 /* Phones (760px wide or less) */
 @media (max-width: 760px) {
   .hero-shell { margin: 0 10px; border-radius: 28px; }
@@ -941,10 +895,6 @@ button.amt { cursor: pointer; }
   .verse-strip { margin-top: 28px; flex-direction: column; align-items: flex-start; gap: 8px; }
   .hero-actions { margin-top: 30px; }
   .hero-actions .btn { flex: 1; }
-  .times { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .time-card { padding: 20px; }
-  .time-card .v { font-size: 26px; margin-top: 12px; }
-  .time-card.mid, .time-card.venue { grid-column: 1 / -1; }
   .paths { grid-template-columns: 1fr 1fr; gap: 12px; }
   .path { min-height: 122px; padding: 18px; gap: 16px; }
   .sermon-feature, .about-grid, .ev-grid { grid-template-columns: 1fr; }

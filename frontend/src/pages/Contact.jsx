@@ -1,8 +1,10 @@
+// Fragment groups several elements without adding an extra box to the page
+import { Fragment } from 'react'
 import Button from '../components/Button.jsx'
 import Icon from '../components/Icon.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import ComingSoon from '../components/ComingSoon.jsx'
-import { CHURCH, SOCIAL_LINKS } from '../siteInfo.js'
+import { CHURCH, SOCIAL_LINKS, weeklyActivities } from '../siteInfo.js'
 
 // The ways to reach the Chapel. Values come from siteInfo.js; until they are
 // filled in there, the card says "To be added".
@@ -106,14 +108,21 @@ function Contact() {
 
             <div className="stack g20">
               <div className="card-flat big-pad">
-                <h4>Service times</h4>
+                <h4>Weekly activities</h4>
+                {/* One row per day; a day with several activities lists each one */}
                 <dl className="kv mt20">
-                  <dt>Sunday</dt>
-                  <dd>9:00 AM · Sunday Service</dd>
-                  <dt>Tuesday</dt>
-                  <dd>6:00 PM · CYF Service</dd>
-                  <dt>Midweek</dt>
-                  <dd className="ph-text">To be announced</dd>
+                  {weeklyActivities.map((day) => (
+                    <Fragment key={day.day}>
+                      <dt>{day.day}</dt>
+                      <dd>
+                        {day.items.map((item) => (
+                          <span key={item.name} className="kv-line">
+                            {item.time} · {item.name}
+                          </span>
+                        ))}
+                      </dd>
+                    </Fragment>
+                  ))}
                 </dl>
               </div>
               <div className="card card-pad flat-card">

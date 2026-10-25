@@ -5,11 +5,13 @@ import Photo from '../components/Photo.jsx'
 import Loading from '../components/Loading.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import EventCard from '../components/EventCard.jsx'
+import WeeklyActivities from '../components/WeeklyActivities.jsx'
 import SermonPlayer from '../components/SermonPlayer.jsx'
 import useFetch from '../useFetch.js'
 import { mediaUrl } from '../api.js'
 import { currentDevotion } from '../devotions.js'
 import { dayMonth } from '../format.js'
+import { mainService } from '../siteInfo.js'
 import emblem from '../assets/emblem.png'
 
 // The "I want to…" shortcut tiles
@@ -70,12 +72,15 @@ function Home() {
               <Photo dark caption="Photo: the congregation at Sunday worship" />
               <div className="float-card">
                 <span className="datetile">
-                  <b>Sun</b>
-                  <span>9:00</span>
+                  <b>{mainService.short}</b>
+                  {/* "10:00 AM" -> "10:00": the tile is too small for AM/PM */}
+                  <span>{mainService.time.replace(/ (AM|PM)$/, '')}</span>
                 </span>
                 <div>
                   <div className="tiny muted label">Next service</div>
-                  <div className="float-title">Sunday Service · 9:00 AM</div>
+                  <div className="float-title">
+                    {mainService.name} · {mainService.time}
+                  </div>
                   <div className="small muted">Chapel of Faith Auditorium</div>
                 </div>
               </div>
@@ -84,47 +89,8 @@ function Home() {
         </div>
       </section>
 
-      {/* Service times */}
-      <section className="sec-sm">
-        <div className="wrap times">
-          <div className="time-card">
-            <div className="k">
-              <Icon name="sun" size={18} />
-              Every Sunday
-            </div>
-            <div className="v">9:00 AM</div>
-            <div className="d">Sunday Service</div>
-          </div>
-          <div className="time-card">
-            <div className="k">
-              <Icon name="users" size={18} />
-              Every Tuesday
-            </div>
-            <div className="v">6:00 PM</div>
-            <div className="d">CYF Service</div>
-          </div>
-          <div className="time-card mid">
-            <div className="k">
-              <Icon name="clock" size={18} />
-              Midweek
-            </div>
-            <div className="v v-small ph-text">Time to be announced</div>
-            <div className="d">Midweek Service</div>
-          </div>
-          <div className="time-card venue">
-            <div>
-              <div className="k">
-                <Icon name="mapPin" size={18} />
-                Where
-              </div>
-              <div className="venue-name">Chapel of Faith Auditorium, FUTA campus</div>
-            </div>
-            <Link className="link mt20" to="/contact">
-              Get directions <Icon name="arrowRight" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Weekly activities: every day's activities and times (from siteInfo.js) */}
+      <WeeklyActivities />
 
       {/* Shortcuts */}
       <section className="sec-sm paths-section">
