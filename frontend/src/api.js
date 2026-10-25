@@ -33,9 +33,10 @@ export function mediaUrl(path) {
   return API_URL + path
 }
 
-// Called when the backend says our login is no longer valid (401). Admin pages listen
-// for this event (see AuthContext.jsx) and send the user back to the login page.
-function handleUnauthorized() {
+// Log out: forget the token and tell the app. ProtectedRoute.jsx listens for the
+// "auth:logout" event and sends the user back to the login page.
+// Used by the Log out button, and automatically when the backend answers 401.
+export function logout() {
   clearToken()
   window.dispatchEvent(new Event('auth:logout'))
 }
@@ -86,7 +87,7 @@ async function request(method, path, body) {
     // A 401 on an admin request means the token expired or is wrong: log out.
     // (The login form itself also gets 401 for a wrong password, so skip that one.)
     if (response.status === 401 && token && path !== '/auth/login') {
-      handleUnauthorized()
+      logout()
     }
     throw new Error(readableError(response.status, data))
   }

@@ -14,9 +14,14 @@ import SermonDetail from './pages/SermonDetail.jsx'
 import EventDetail from './pages/EventDetail.jsx'
 import DevotionDetail from './pages/DevotionDetail.jsx'
 import NotFound from './pages/NotFound.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Login from './pages/admin/Login.jsx'
+import AdminLayout from './pages/admin/AdminLayout.jsx'
+import Dashboard from './pages/admin/Dashboard.jsx'
 
 // App decides which page to show for each URL.
-// Pages inside the Layout route get the Navbar and Footer around them.
+// Public pages sit inside the Layout route, so they get the Navbar and Footer.
+// Admin pages sit inside AdminLayout (sidebar) and need a login (ProtectedRoute).
 function App() {
   return (
     <Routes>
@@ -37,6 +42,20 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         {/* "*" matches any other URL, so unknown pages show the 404 page */}
         <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* Staff area. Everything under /admin needs a login, except the login page. */}
+      <Route path="/admin/login" element={<Login />} />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* "index" = the page shown at /admin itself */}
+        <Route index element={<Dashboard />} />
       </Route>
     </Routes>
   )
