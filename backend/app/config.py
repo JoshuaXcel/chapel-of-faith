@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
+    # websites allowed to call this API from the browser (the React frontend).
+    # Several can be given, separated by commas, e.g. "http://localhost:5173,https://chapeloffaith.org"
+    cors_origins: str = "http://localhost:5173"
     # only used by the tests (see tests/conftest.py)
     test_database_url: str | None = None
 

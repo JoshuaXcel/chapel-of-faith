@@ -1,7 +1,7 @@
 import Icon from './Icon.jsx'
 
 // Shows a photo, or a soft placeholder box with a caption when there is no photo yet.
-// src: full image address (use imageUrl() from api.js for images from the backend)
+// src: full image address (use mediaUrl() from api.js for images from the backend)
 function Photo({ src, alt = '', caption = 'Photo', dark = false, className = '' }) {
   let classes = 'ph'
   if (dark) classes += ' dark'
