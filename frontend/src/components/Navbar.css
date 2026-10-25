@@ -1,0 +1,70 @@
+/* Top bar of every public page */
+.hdr {
+  position: relative;
+  z-index: 5;
+}
+.hdr .bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88px;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav a {
+  padding: 10px 14px;
+  border-radius: var(--pill);
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.nav a:hover {
+  color: var(--plum-700);
+  background: var(--plum-50);
+}
+/* "active" is added by NavLink to the current page's link */
+.nav a.active {
+  color: var(--plum-700);
+  background: var(--plum-100);
+}
+.hdr-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.livepill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  padding: 0 14px;
+  height: 40px;
+  border-radius: var(--pill);
+  border: 1.5px solid var(--line);
+}
+.livepill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c9bfc9;
+}
+.menu-btn {
+  display: none;
+}
+
+/* Phones: hide the long link list and show the menu button instead */
+@media (max-width: 1060px) {
+  .nav { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+@media (max-width: 760px) {
+  .hdr .bar { height: 72px; }
+  .brand img { width: 38px; }
+  .brand .bt b { font-size: 18px; }
+  .brand .bt span { font-size: 10px; letter-spacing: .14em; }
+}
