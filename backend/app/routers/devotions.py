@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from datetime import date
 
 from app.database import get_db
 from app.models.devotion import Devotion
-from app.schemas import DevotionOut
+from app.schemas import DevotionOut, DevotionCreate, DevotionUpdate
+from app.dependencies import require_role
 
 router = APIRouter(prefix="/devotions", tags=["devotions"])
 
@@ -34,4 +36,40 @@ def get_devotion_by_id(devotion_id: int, db: Session = Depends(get_db)):
     if not result:
         raise HTTPException(status_code=404, detail="Devotion not found")
     return result
+
+@router.post("", response_model=DevotionOut, status_code=status.HTTP_201_CREATED)
+def create_devotion(payload: DevotionCreate, db: Session = Depends(get_db), admin = Depends(require_role("super_admin", "editor"))):
+    devotion = Devotion(**payload.model_dump())
+    db.add(devotion)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="A devotion for that date already exists")
+    db.refresh(devotion)  # pull back the id + created_at the DB made
+    return devotion
+
+@router.patch("/{devotion_id}", response_model=DevotionOut)
+def update_devotion(devotion_id: int, payload: DevotionUpdate, db: Session = Depends(get_db), admin = Depends(require_role("super_admin", "editor"))):
+    devotion = db.get(Devotion, devotion_id)
+    if not devotion:
+        raise HTTPException(status_code=404, detail="Devotion not found")
+    data = payload.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        setattr(devotion, key, value)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="A devotion for that date already exists")
+    db.refresh(devotion)
+    return devotion
+
+@router.delete("/{devotion_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_devotion(devotion_id: int, db: Session = Depends(get_db), admin = Depends(require_role("super_admin", "editor"))):
+    devotion = db.get(Devotion, devotion_id)
+    if not devotion:
+        raise HTTPException(status_code=404, detail="Devotion not found")
+    db.delete(devotion)
+    db.commit()
 
