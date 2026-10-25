@@ -81,3 +81,54 @@ class EventUpdate(BaseModel):
     ends_at: datetime | None = None
     image_url: str | None = None
 
+class SermonCreate(BaseModel):
+    title: str
+    description: str | None = None
+    preacher: str
+    preached_on: date
+    scripture: str | None = None
+    audio_url: str | None = None
+
+class SermonUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    preacher: str | None = None
+    preached_on: date | None = None
+    scripture: str | None = None
+    audio_url: str | None = None
+
+class DevotionCreate(BaseModel):
+    title: str
+    scripture: str
+    body: str
+    devotion_date: date
+    author: str | None = None
+
+class DevotionUpdate(BaseModel):
+    title: str | None = None
+    scripture: str | None = None
+    body: str | None = None
+    devotion_date: date | None = None
+    author: str | None = None
+
+class LeadershipCreate(BaseModel):
+    name: str
+    role: str
+    bio: str | None = None
+    photo_url: str | None = None
+    display_order: int = 0
+
+class LeadershipUpdate(BaseModel):
+    name: str | None = None
+    role: str | None = None
+    bio: str | None = None
+    photo_url: str | None = None
+    display_order: int | None = None
+
+class GalleryImageCreate(BaseModel):
+    image_url: str
+    caption: str | None = None
+
+class GalleryImageUpdate(BaseModel):
+    image_url: str | None = None
+    caption: str | None = None
