@@ -1,0 +1,186 @@
+/*
+  WeeklyActivities.css — styles for the "Weekly activities" band on Home.
+
+  A deep purple band (like the church's old site had a dark band, but in our
+  purple brand colour) holding white day cards. Times are in the Fraunces
+  heading font and gold is used for the small accents.
+*/
+
+.wa {
+  background: var(--plum-900);
+  padding: 96px 0;
+  /* a soft glow in the top-right corner so the band is not flat */
+  background-image: radial-gradient(circle at 85% 0%, rgba(143,58,146,.45), transparent 55%);
+}
+
+/* Heading on the left, short welcome line on the right */
+.wa-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 44px;
+}
+.wa-head h2 {
+  color: #fff;
+}
+.wa-head p {
+  max-width: 400px;
+  font-size: 16.5px;
+}
+
+/* Two columns: Sunday on the left (taller), the other days stacked on the right */
+.wa-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 18px;
+}
+.wa-day {
+  background: #fff;
+  color: var(--ink);
+  border-radius: var(--r-lg);
+  padding: 28px 30px;
+  box-shadow: var(--sh-3);
+}
+/* The day with several activities spans every row of the right column.
+   It is a flex column so its list can grow and its rows share the height
+   evenly, instead of leaving an empty gap at the bottom of the card. */
+.wa-day-multi {
+  grid-row: span 2;
+  display: flex;
+  flex-direction: column;
+}
+.wa-day-multi .wa-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.wa-day-multi .wa-item {
+  flex: 1;
+}
+
+/* Card top: gold icon circle + day name */
+.wa-day-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.wa-ico {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--gold-100);
+  color: var(--gold-700);
+}
+.wa-day-name {
+  font-size: 28px;
+  line-height: 1.1;
+}
+.wa-every {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--plum-600);
+}
+
+/* The list of activities: name on the left, time on the right */
+.wa-list {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+}
+.wa-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.wa-name {
+  display: block;
+  font-weight: 600;
+  font-size: 17px;
+}
+.wa-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.wa-time {
+  flex: none;
+  font-family: var(--serif);
+  font-size: 26px;
+  letter-spacing: -.01em;
+  color: var(--plum-700);
+  white-space: nowrap;
+}
+/* The main Sunday service gets a soft gold highlight */
+.wa-main {
+  margin: 4px -14px 0;
+  padding: 16px 14px;
+  border-top: none;
+  border-radius: var(--r);
+  background: var(--gold-50);
+  box-shadow: inset 0 0 0 1px var(--gold-100);
+}
+.wa-main .wa-time {
+  color: var(--gold-700);
+}
+
+/* Where + directions line under the cards */
+.wa-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 28px;
+  color: rgba(255,255,255,.8);
+  font-size: 15.5px;
+}
+.wa-foot .i {
+  color: var(--gold-400);
+}
+
+/* Phones (760px wide or less): everything in one column */
+@media (max-width: 760px) {
+  .wa {
+    padding: 64px 0;
+  }
+  .wa-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .wa-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .wa-day-multi {
+    grid-row: auto;
+  }
+  .wa-day-multi .wa-item {
+    flex: none;
+  }
+  .wa-day {
+    padding: 22px 20px;
+  }
+  .wa-day-name {
+    font-size: 24px;
+  }
+  .wa-time {
+    font-size: 22px;
+  }
+  .wa-name {
+    font-size: 16px;
+  }
+}

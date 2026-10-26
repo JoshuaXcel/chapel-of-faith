@@ -1,0 +1,75 @@
+/* Dark footer at the bottom of every public page */
+.ftr {
+  background: var(--plum-950);
+  color: rgba(255,255,255,.72);
+  padding: 88px 0 36px;
+  margin-top: 0;
+}
+.ftr-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+.ftr h5 {
+  font-size: 13px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.ftr ul {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  font-size: 15.5px;
+}
+.ftr .brand .bt b {
+  color: #fff;
+}
+.ftr .brand .bt span {
+  color: rgba(255,255,255,.5);
+}
+.ftr .soc {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
+}
+.ftr .soc a {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.ftr .soc .i {
+  width: 18px;
+  height: 18px;
+}
+.ftr .base {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 72px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+}
+.ftr-about {
+  max-width: 340px;
+  margin-top: 24px;
+  font-size: 15.5px;
+}
+.ftr .link {
+  color: var(--gold-400);
+}
+
+@media (max-width: 760px) {
+  .ftr { padding: 56px 0 28px; }
+  .ftr-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .ftr-grid > div:first-child { grid-column: 1 / -1; }
+  .ftr .base { flex-direction: column; gap: 8px; margin-top: 44px; }
+}

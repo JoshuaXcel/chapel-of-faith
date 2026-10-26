@@ -1,0 +1,76 @@
+/* The full-screen phone menu (dark purple) */
+.mm {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+  padding: 0 20px 32px;
+  background: linear-gradient(170deg, var(--plum-800), var(--plum-950));
+  color: #fff;
+}
+.mm-bar {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mm .brand img {
+  width: 38px;
+}
+.mm .brand .bt b {
+  font-size: 18px;
+  color: #fff;
+}
+.mm .brand .bt span {
+  font-size: 10px;
+  color: rgba(255, 255, 255, .6);
+}
+.mm-close {
+  background: rgba(255, 255, 255, .1);
+  border-color: transparent;
+  color: #fff;
+}
+.mm-live {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .08);
+}
+.mm-live .chip {
+  height: 26px;
+}
+.mm-live .small {
+  color: rgba(255, 255, 255, .6);
+}
+.mm-nav {
+  margin-top: 16px;
+}
+.mm-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  font-family: var(--serif);
+  font-size: 19px;
+}
+.mm-ico {
+  color: var(--gold-400);
+}
+.mm-social {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+  color: rgba(255, 255, 255, .7);
+}
+.mm-social a {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
