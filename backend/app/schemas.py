@@ -1,5 +1,7 @@
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from datetime import date, datetime
+from typing import Literal
+import calendar
 
 class LoginRequest(BaseModel):
     email: str
@@ -173,17 +175,27 @@ class GalleryImageUpdate(BaseModel):
             raise ValueError("cannot be null")
         return value
 
-# membership form: full_name and phone are required, the rest is optional.
+MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
+               "July", "August", "September", "October", "November", "December"]
+
+# the choices on the membership form ("I am a...")
+MemberType = Literal["undergraduate", "graduate", "staff", "other"]
+Level = Literal["100L", "200L", "300L", "400L", "500L"]
+
+# membership form: full_name, phone, member_type and the birthday's day + month are required, the rest is optional.
 # max_length matches the column sizes in models/member.py, so long text gives 422 instead of a 500
 class MemberCreate(BaseModel):
     full_name: str = Field(min_length=1, max_length=120)
     phone: str = Field(min_length=1, max_length=30)
     email: str | None = Field(default=None, max_length=255)
     gender: str | None = Field(default=None, max_length=20)
+    member_type: MemberType
     department: str | None = Field(default=None, max_length=120)
-    level: str | None = Field(default=None, max_length=20)
+    level: Level | None = None
     hostel_or_address: str | None = Field(default=None, max_length=255)
-    birthday: date | None = None
+    birth_day: int = Field(ge=1, le=31)
+    birth_month: int = Field(ge=1, le=12)
+    birth_year: int | None = None
     joined_whatsapp_consent: bool = False
 
     # "   " is not a name or a phone number
@@ -195,16 +207,52 @@ class MemberCreate(BaseModel):
             raise ValueError("cannot be blank")
         return value
 
+    # the year is optional, but if it's given it must be a sensible one
+    @field_validator("birth_year")
+    @classmethod
+    def check_birth_year(cls, value):
+        this_year = date.today().year
+        if value is not None and not 1900 <= value <= this_year:
+            raise ValueError(f"must be between 1900 and {this_year}")
+        return value
+
+    # day and month are checked one by one above; here we check them together,
+    # so dates that don't exist (31 April, 30 February) are rejected.
+    # with no year we check against 2000 (a leap year), so 29 February is allowed
+    @model_validator(mode="after")
+    def check_birthday_exists(self):
+        year = self.birth_year if self.birth_year is not None else 2000
+        days_in_month = calendar.monthrange(year, self.birth_month)[1]
+        if self.birth_day > days_in_month:
+            month = MONTH_NAMES[self.birth_month - 1]
+            if self.birth_year is None:
+                raise ValueError(f"birthday: {self.birth_day} {month} is not a real date")
+            raise ValueError(f"birthday: {self.birth_day} {month} {self.birth_year} is not a real date")
+        return self
+
+    # only undergraduates have a level, and "other" has no department,
+    # so anything sent for those is dropped instead of being saved
+    @model_validator(mode="after")
+    def keep_fields_for_member_type(self):
+        if self.member_type != "undergraduate":
+            self.level = None
+        if self.member_type == "other":
+            self.department = None
+        return self
+
 class MemberOut(BaseModel):
     id: int
     full_name: str
     phone: str
     email: str | None
     gender: str | None
+    member_type: str
     department: str | None
     level: str | None
     hostel_or_address: str | None
-    birthday: date | None
+    birth_day: int
+    birth_month: int
+    birth_year: int | None
     joined_whatsapp_consent: bool
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

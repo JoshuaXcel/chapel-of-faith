@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 from sqlalchemy import String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -18,13 +18,23 @@ class Member(Base):
 
     gender: Mapped[str | None] = mapped_column(String(20), nullable=True)
 
+    # "undergraduate", "graduate", "staff" or "other" (checked in schemas.py)
+    member_type: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # department for undergraduates and staff, course studied for graduates, empty for "other"
     department: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
+    # only for undergraduates: 100L to 500L
     level: Mapped[str | None] = mapped_column(String(20), nullable=True)
 
     hostel_or_address: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
-    birthday: Mapped[date | None] = mapped_column(nullable=True)
+    # birthday: day and month are required, the year is optional (not everyone wants to share their age)
+    birth_day: Mapped[int] = mapped_column(nullable=False)
+
+    birth_month: Mapped[int] = mapped_column(nullable=False)
+
+    birth_year: Mapped[int | None] = mapped_column(nullable=True)
 
     # ticked "add me to the church WhatsApp groups" on the form
     joined_whatsapp_consent: Mapped[bool] = mapped_column(nullable=False, server_default="false")
