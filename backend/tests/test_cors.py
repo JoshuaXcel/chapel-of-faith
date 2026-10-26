@@ -23,3 +23,23 @@ def test_unknown_origin_is_not_allowed(client):
     response = client.get("/health", headers={"Origin": "http://evil.example.com"})
 
     assert "access-control-allow-origin" not in response.headers
+
+
+def test_cors_never_allows_credentials(client):
+    response = client.get("/health", headers={"Origin": "http://localhost:5173"})
+
+    assert "access-control-allow-credentials" not in response.headers
+
+
+def test_preflight_from_unknown_origin_is_refused(client):
+    response = client.options(
+        "/events",
+        headers={
+            "Origin": "http://evil.example.com",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "authorization,content-type",
+        },
+    )
+
+    assert response.status_code == 400
+    assert "access-control-allow-origin" not in response.headers

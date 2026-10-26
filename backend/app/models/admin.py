@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, validates
 
 from app.database import Base
 
@@ -22,5 +22,8 @@ class Admin(Base):
     
     created_at: Mapped[datetime] = mapped_column(server_default=func.now(), nullable=False)
 
-
-
+    # every admin email is saved in lower case (and without spaces), so logging in
+    # doesn't depend on how the email was typed when the admin was created
+    @validates("email")
+    def normalise_email(self, key, value):
+        return value.strip().lower()
