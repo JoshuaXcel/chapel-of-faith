@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -6,12 +6,21 @@ from app.database import get_db
 from app.models.member import Member
 from app.schemas import MemberCreate, MemberOut
 from app.dependencies import require_role
+from app.rate_limit import client_ip, member_signups_per_ip, too_many_requests
 
 router = APIRouter(prefix="/members", tags=["members"])
 
 # public: anyone can register from the membership form (no login needed)
 @router.post("", response_model=MemberOut, status_code=status.HTTP_201_CREATED)
-def register_member(payload: MemberCreate, db: Session = Depends(get_db)):
+def register_member(payload: MemberCreate, request: Request, db: Session = Depends(get_db)):
+    # anyone can post here, so a script could fill the table with junk.
+    # A generous limit per address stops that without blocking a real sign-up drive
+    ip = client_ip(request)
+    wait = member_signups_per_ip.retry_after(ip)
+    if wait:
+        raise too_many_requests(wait, "Too many sign-ups from your network.")
+    member_signups_per_ip.hit(ip)
+
     member = Member(**payload.model_dump())
     db.add(member)
     db.commit()

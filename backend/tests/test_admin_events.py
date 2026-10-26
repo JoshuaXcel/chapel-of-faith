@@ -125,3 +125,63 @@ def test_delete_unknown_event_returns_404(client, editor_headers):
     response = client.delete("/events/9999", headers=editor_headers)
 
     assert response.status_code == 404
+
+
+# --- start and end times ---
+
+def test_create_event_ending_before_it_starts_returns_422(client, editor_headers):
+    earlier = (NEXT_MONTH - timedelta(hours=1)).isoformat()
+
+    response = create_event(client, editor_headers, ends_at=earlier)
+
+    assert response.status_code == 422
+
+
+def test_create_event_ending_when_it_starts_is_ok(client, editor_headers):
+    response = create_event(client, editor_headers, ends_at=NEXT_MONTH.isoformat())
+
+    assert response.status_code == 201
+
+
+def test_update_event_end_to_before_its_saved_start_returns_422(client, editor_headers):
+    event_id = create_event(client, editor_headers).json()["id"]
+    earlier = (NEXT_MONTH - timedelta(hours=1)).isoformat()
+
+    response = client.patch(f"/events/{event_id}", json={"ends_at": earlier}, headers=editor_headers)
+
+    assert response.status_code == 422
+    # nothing was saved
+    assert client.get(f"/events/{event_id}").json()["ends_at"] is None
+
+
+def test_update_event_start_to_after_its_saved_end_returns_422(client, editor_headers):
+    ends = (NEXT_MONTH + timedelta(hours=2)).isoformat()
+    event_id = create_event(client, editor_headers, ends_at=ends).json()["id"]
+    later = (NEXT_MONTH + timedelta(hours=3)).isoformat()
+
+    response = client.patch(f"/events/{event_id}", json={"starts_at": later}, headers=editor_headers)
+
+    assert response.status_code == 422
+
+
+def test_update_event_with_both_times_in_the_wrong_order_returns_422(client, editor_headers):
+    event_id = create_event(client, editor_headers).json()["id"]
+    payload = {"starts_at": NEXT_MONTH.isoformat(), "ends_at": (NEXT_MONTH - timedelta(hours=1)).isoformat()}
+
+    response = client.patch(f"/events/{event_id}", json=payload, headers=editor_headers)
+
+    assert response.status_code == 422
+
+
+def test_event_time_sent_in_utc_is_saved_as_lagos_time(client, editor_headers):
+    response = create_event(client, editor_headers, starts_at="2030-01-01T09:00:00Z")
+
+    assert response.status_code == 201
+    assert response.json()["starts_at"] == "2030-01-01T10:00:00"
+
+
+def test_mixing_utc_and_plain_times_does_not_crash(client, editor_headers):
+    # starts 09:00 UTC (= 10:00 Lagos), ends 11:00 Lagos
+    response = create_event(client, editor_headers, starts_at="2030-01-01T09:00:00Z", ends_at="2030-01-01T11:00:00")
+
+    assert response.status_code == 201

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from datetime import date
 
+from app.clock import church_today
 from app.database import get_db
 from app.models.devotion import Devotion
 from app.schemas import DevotionOut, DevotionCreate, DevotionUpdate
@@ -15,7 +15,8 @@ router = APIRouter(prefix="/devotions", tags=["devotions"])
 @router.get("/today", response_model=DevotionOut)
 def get_devotion_today(db: Session = Depends(get_db)):
     """Get today's devotion."""
-    stmt = select(Devotion).where(Devotion.devotion_date == date.today())
+    # "today" in the church's time zone, not the server's (see app/clock.py)
+    stmt = select(Devotion).where(Devotion.devotion_date == church_today())
     result = db.scalar(stmt)
     if not result:
         raise HTTPException(status_code=404, detail="No devotion for today")
