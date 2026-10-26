@@ -5,6 +5,7 @@ import ErrorMessage from '../../components/ErrorMessage.jsx'
 import useFetch from '../../useFetch.js'
 import { del } from '../../api.js'
 import { shortDate } from '../../format.js'
+import { birthdayText, memberTypeLabel } from '../../membership.js'
 
 // Admin "Members" page (/admin/members): everyone who filled in the membership
 // form on the website (pages/Membership.jsx), newest first.
@@ -60,11 +61,11 @@ function AdminMembers() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Phone</th>
-                  <th className="hide-m">Email</th>
-                  <th className="hide-m">Department</th>
+                  <th>Contact</th>
+                  <th>Type</th>
+                  <th className="hide-m">Birthday</th>
+                  <th className="hide-m">Department / course</th>
                   <th className="hide-m">Level</th>
-                  <th className="hide-m">Registered</th>
                   <th></th>
                 </tr>
               </thead>
@@ -77,16 +78,28 @@ function AdminMembers() {
                       {member.joined_whatsapp_consent && (
                         <span className="wa-tag">WhatsApp groups</span>
                       )}
+                      {/* when they registered, in small grey text under the name */}
+                      <span className="cell-sub hide-m">Registered {shortDate(member.created_at)}</span>
                     </td>
                     <td className="nowrap">
                       {/* tel: links open the phone's dialler when tapped */}
                       <a href={`tel:${member.phone}`}>{member.phone}</a>
+                      {/* the email (if they gave one) sits under the phone number,
+                          so the table stays narrow enough for a laptop screen */}
+                      {member.email && <span className="cell-sub hide-m">{member.email}</span>}
+                    </td>
+                    {/* "graduate" -> "Graduate" */}
+                    <td className="nowrap">{memberTypeLabel(member.member_type)}</td>
+                    {/* "12 March", or "12 March 2004" if they gave the year */}
+                    <td className="hide-m nowrap">
+                      {birthdayText(member.birth_day, member.birth_month, member.birth_year)}
                     </td>
                     {/* "—" when an optional field was left empty */}
-                    <td className="hide-m">{member.email || '—'}</td>
                     <td className="hide-m">{member.department || '—'}</td>
-                    <td className="hide-m">{member.level || '—'}</td>
-                    <td className="hide-m nowrap">{shortDate(member.created_at)}</td>
+                    {/* only undergraduates have a level */}
+                    <td className="hide-m">
+                      {member.member_type === 'undergraduate' && member.level ? member.level : '—'}
+                    </td>
                     <td className="actions">
                       <button
                         className="iconbtn danger"

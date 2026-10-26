@@ -925,6 +925,80 @@ button.amt { cursor: pointer; }
   border-color: var(--danger);
 }
 /* the WhatsApp groups tick box and its sentence, side by side */
+/* A label for a group of boxes (like "Birthday" or "I am a…").
+   It looks the same as the normal labels above an input. */
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+/* the small "Day", "Month", "Year" labels inside the birthday group */
+.field .sub-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/* "I am a…": four options side by side (two by two on phones) */
+.type-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.type-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line-2);
+  background: #fff;
+  font-size: 15.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.field .type-option {
+  /* undo the bold "label" style from .field label */
+  font-weight: 500;
+}
+.type-option input {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin: 0;
+  accent-color: var(--plum-600);
+}
+/* the picked option gets the purple border and a light purple background */
+.type-option.on {
+  border-color: var(--plum-600);
+  background: var(--plum-100);
+  color: var(--ink);
+  font-weight: 600;
+}
+/* show the keyboard focus ring on the whole card, not just the small circle */
+.type-option:focus-within {
+  box-shadow: 0 0 0 4px var(--plum-100);
+}
+
+/* Birthday: Day, Month and Year next to each other */
+.birthday-row {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 1.3fr;
+  gap: 12px;
+}
+.birthday-row .field {
+  gap: 6px;
+  min-width: 0; /* lets the boxes shrink on narrow phones */
+}
+
+/* Phones: Day and Month side by side, and Year on its own line underneath */
+@media (max-width: 640px) {
+  .type-options { grid-template-columns: 1fr 1fr; }
+  .birthday-row { grid-template-columns: 1fr 2fr; }
+  .birthday-row .field:last-child { grid-column: 1 / -1; }
+}
+
 .check-row {
   display: flex;
   align-items: center;

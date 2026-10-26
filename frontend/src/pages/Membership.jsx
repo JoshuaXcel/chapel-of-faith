@@ -5,6 +5,7 @@ import Icon from '../components/Icon.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import { post } from '../api.js'
+import { daysInMonth, levels, memberTypes, monthNames } from '../membership.js'
 
 // Membership page (/membership): the "Make it official" registration form.
 // When someone submits it, the details are saved in the backend's `members`
@@ -17,15 +18,47 @@ const emptyForm = {
   phone: '',
   email: '',
   gender: '',
+  member_type: '', // "undergraduate", "graduate", "staff" or "other"
   department: '',
   level: '',
   hostel_or_address: '',
-  birthday: '',
+  birth_day: '', // 1-31, required
+  birth_month: '', // 1-12, required
+  birth_year: '', // optional: not everyone wants to share their age
   joined_whatsapp_consent: false,
 }
 
-// Choices for the "Level" drop-down
-const levels = ['100L', '200L', '300L', '400L', '500L', 'Postgraduate', 'Staff', 'Other']
+// Numbers 1 to 31 for the "Day" drop-down
+const dayNumbers = Array.from({ length: 31 }, (_, index) => index + 1)
+
+// The department box has a different label (and example) for each type.
+// "other" is missing on purpose: they don't get a department box at all.
+const departmentLabels = {
+  undergraduate: { label: 'Department', placeholder: 'e.g. Computer Science' },
+  graduate: { label: 'Course studied', placeholder: 'e.g. Industrial Chemistry' },
+  staff: { label: 'Department', placeholder: 'e.g. Bursary, Library' },
+}
+
+// Checks the birthday. Returns a message, or '' if it is fine.
+function birthdayProblem(form) {
+  if (!form.birth_day || !form.birth_month) {
+    return 'Please choose the day and month of your birthday.'
+  }
+  const thisYear = new Date().getFullYear()
+  const year = form.birth_year.trim()
+  // the year is optional, but if it's typed it must be 4 digits between 1900 and this year
+  if (year && (!/^\d{4}$/.test(year) || Number(year) < 1900 || Number(year) > thisYear)) {
+    return `Please enter a year between 1900 and ${thisYear}, or leave it empty.`
+  }
+  // dates that don't exist, like 31 April or 30 February
+  const day = Number(form.birth_day)
+  const month = Number(form.birth_month)
+  if (day > daysInMonth(month, Number(year))) {
+    const date = `${day} ${monthNames[month - 1]}${year ? ` ${year}` : ''}`
+    return `${date} is not a real date. Please check the day and month.`
+  }
+  return ''
+}
 
 // Checks the form before sending it, like Pydantic does on the backend.
 // Returns an object of problems, e.g. { phone: 'Please enter your phone number.' }.
@@ -44,6 +77,13 @@ function validate(form) {
   if (form.email.trim() && !/^\S+@\S+\.\S+$/.test(form.email.trim())) {
     errors.email = 'Please enter a valid email address, or leave it empty.'
   }
+  if (!form.member_type) {
+    errors.member_type = 'Please choose one: Undergraduate, Graduate, Staff or Other.'
+  }
+  const birthday = birthdayProblem(form)
+  if (birthday) {
+    errors.birthday = birthday
+  }
   return errors
 }
 
@@ -59,6 +99,13 @@ function toPayload(form) {
       payload[key] = value
     }
   }
+  // the birthday boxes hold text ("12"), but the backend wants numbers (12)
+  payload.birth_day = Number(form.birth_day)
+  payload.birth_month = Number(form.birth_month)
+  payload.birth_year = form.birth_year.trim() ? Number(form.birth_year) : null
+  // only undergraduates have a level, and "other" has no department
+  if (form.member_type !== 'undergraduate') payload.level = null
+  if (form.member_type === 'other') payload.department = null
   return payload
 }
 
@@ -74,8 +121,10 @@ function Membership() {
   function handleChange(event) {
     const { name, value, type, checked } = event.target
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value })
-    // clear the error under this field as soon as the person edits it
-    if (errors[name]) setErrors({ ...errors, [name]: undefined })
+    // clear the error under this field as soon as the person edits it.
+    // The three birthday boxes share one message, called "birthday".
+    const errorKey = name.startsWith('birth_') ? 'birthday' : name
+    if (errors[errorKey]) setErrors({ ...errors, [errorKey]: undefined })
   }
 
   async function handleSubmit(event) {
@@ -210,6 +259,168 @@ function Membership() {
                   </div>
                 </div>
 
+                {/* "I am a…": four big tappable options. They are radio buttons
+                    (only one can be picked), styled to look like cards. */}
+                <div
+                  className="field"
+                  role="radiogroup"
+                  aria-labelledby="member_type-label"
+                  aria-describedby={errors.member_type ? 'member_type-error' : undefined}
+                >
+                  <span id="member_type-label" className="field-label">
+                    I am a… <span className="req">*</span>
+                  </span>
+                  <div className="type-options">
+                    {memberTypes.map((type) => (
+                      <label
+                        key={type.value}
+                        className={`type-option${form.member_type === type.value ? ' on' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="member_type"
+                          value={type.value}
+                          checked={form.member_type === type.value}
+                          onChange={handleChange}
+                        />
+                        <span>{type.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {fieldError('member_type')}
+                </div>
+
+                {/* Department / Level: which boxes show depends on the choice above */}
+                {form.member_type === 'undergraduate' && (
+                  <div className="form-grid">
+                    <div className="field">
+                      <label htmlFor="department">
+                        Department <small>(optional)</small>
+                      </label>
+                      <input
+                        id="department"
+                        name="department"
+                        className="input"
+                        placeholder={departmentLabels.undergraduate.placeholder}
+                        maxLength={120}
+                        value={form.department}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="level">
+                        Level <small>(optional)</small>
+                      </label>
+                      <select
+                        id="level"
+                        name="level"
+                        className="input"
+                        value={form.level}
+                        onChange={handleChange}
+                      >
+                        <option value="">Choose…</option>
+                        {levels.map((level) => (
+                          <option key={level} value={level}>
+                            {level}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+                {/* Graduates get "Course studied", staff get "Department", and
+                    "other" gets nothing (departmentLabels has no "other") */}
+                {(form.member_type === 'graduate' || form.member_type === 'staff') && (
+                  <div className="field">
+                    <label htmlFor="department">
+                      {departmentLabels[form.member_type].label} <small>(optional)</small>
+                    </label>
+                    <input
+                      id="department"
+                      name="department"
+                      className="input"
+                      placeholder={departmentLabels[form.member_type].placeholder}
+                      maxLength={120}
+                      value={form.department}
+                      onChange={handleChange}
+                    />
+                  </div>
+                )}
+
+                {/* Birthday: day and month are required, the year is optional */}
+                <div
+                  className="field"
+                  role="group"
+                  aria-labelledby="birthday-label"
+                  aria-describedby={errors.birthday ? 'birthday-error' : undefined}
+                >
+                  <span id="birthday-label" className="field-label">
+                    Birthday
+                  </span>
+                  <div className="birthday-row">
+                    <div className="field">
+                      <label htmlFor="birth_day" className="sub-label">
+                        Day <span className="req">*</span>
+                      </label>
+                      <select
+                        id="birth_day"
+                        name="birth_day"
+                        className="input"
+                        value={form.birth_day}
+                        onChange={handleChange}
+                        aria-invalid={Boolean(errors.birthday)}
+                      >
+                        <option value="">Day</option>
+                        {dayNumbers.map((day) => (
+                          <option key={day} value={day}>
+                            {day}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="field">
+                      <label htmlFor="birth_month" className="sub-label">
+                        Month <span className="req">*</span>
+                      </label>
+                      <select
+                        id="birth_month"
+                        name="birth_month"
+                        className="input"
+                        value={form.birth_month}
+                        onChange={handleChange}
+                        aria-invalid={Boolean(errors.birthday)}
+                      >
+                        <option value="">Month</option>
+                        {/* the value is the month's number: January = 1 */}
+                        {monthNames.map((month, index) => (
+                          <option key={month} value={index + 1}>
+                            {month}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="field">
+                      <label htmlFor="birth_year" className="sub-label">
+                        Year <small>(optional)</small>
+                      </label>
+                      {/* text with a number keypad, not type="number", which adds
+                          little up/down arrows that are easy to tap by mistake */}
+                      <input
+                        id="birth_year"
+                        name="birth_year"
+                        className="input"
+                        inputMode="numeric"
+                        placeholder="e.g. 2004"
+                        maxLength={4}
+                        value={form.birth_year}
+                        onChange={handleChange}
+                        aria-invalid={Boolean(errors.birthday)}
+                      />
+                    </div>
+                  </div>
+                  {fieldError('birthday')}
+                </div>
+
                 <div className="form-grid">
                   <div className="field">
                     <label htmlFor="gender">
@@ -228,69 +439,19 @@ function Membership() {
                     </select>
                   </div>
                   <div className="field">
-                    <label htmlFor="birthday">
-                      Birthday <small>(optional)</small>
+                    <label htmlFor="hostel_or_address">
+                      Hostel or address <small>(optional)</small>
                     </label>
                     <input
-                      id="birthday"
-                      name="birthday"
-                      type="date"
+                      id="hostel_or_address"
+                      name="hostel_or_address"
                       className="input"
-                      value={form.birthday}
+                      placeholder="e.g. Jadesola Hall"
+                      maxLength={255}
+                      value={form.hostel_or_address}
                       onChange={handleChange}
                     />
                   </div>
-                </div>
-
-                <div className="form-grid">
-                  <div className="field">
-                    <label htmlFor="department">
-                      Department <small>(optional)</small>
-                    </label>
-                    <input
-                      id="department"
-                      name="department"
-                      className="input"
-                      placeholder="e.g. Computer Science"
-                      maxLength={120}
-                      value={form.department}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="level">
-                      Level <small>(optional)</small>
-                    </label>
-                    <select
-                      id="level"
-                      name="level"
-                      className="input"
-                      value={form.level}
-                      onChange={handleChange}
-                    >
-                      <option value="">Choose…</option>
-                      {levels.map((level) => (
-                        <option key={level} value={level}>
-                          {level}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="field">
-                  <label htmlFor="hostel_or_address">
-                    Hostel or address <small>(optional)</small>
-                  </label>
-                  <input
-                    id="hostel_or_address"
-                    name="hostel_or_address"
-                    className="input"
-                    placeholder="e.g. Jadesola Hall, or your address in Akure"
-                    maxLength={255}
-                    value={form.hostel_or_address}
-                    onChange={handleChange}
-                  />
                 </div>
 
                 <label className="check-row">

@@ -56,6 +56,8 @@ frontend/
     ├── useFetch.js       A hook pages use to load data: { data, loading, error }
     ├── format.js         Turns backend dates into friendly text ("Sunday, 4 October 2026")
     ├── devotions.js      Picks today's devotion and hides future-dated ones
+    ├── membership.js     Membership form choices ("I am a…", levels, months) and
+    │                     birthday helpers, shared by the form and the admin page
     ├── siteInfo.js       Church details (address, phone, social links) and the weekly
     │                     activities (days + times) in one place
     ├── assets/           The crest image and the fonts
@@ -117,12 +119,22 @@ so to change a time you edit that one file.
 ## Membership registration
 
 - `/membership` (`pages/Membership.jsx`) is a public form. It checks the fields in the
-  browser first (full name and phone are required), then sends them with
-  `post('/members', ...)`. The backend saves them in the `members` table.
+  browser first, then sends them with `post('/members', ...)`. The backend saves them
+  in the `members` table (and checks the same rules again).
+  - Required: full name, phone, "I am a…" (Undergraduate, Graduate, Staff or Other),
+    and the day and month of their birthday.
+  - The birth **year** is optional, because not everyone wants to share their age.
+    Dates that don't exist (31 April, 30 February) are rejected; 29 February is fine
+    when the year is empty or a leap year.
+  - What shows under "I am a…": Undergraduate gets Department and Level (100L–500L),
+    Graduate gets "Course studied", Staff gets Department, Other gets nothing extra.
+  - The choices, levels, month names and the birthday helpers live in
+    `src/membership.js`, which the form and the admin Members page both use.
 - The Home page has a "Make it official" band (`components/MembershipBand.jsx`) that
   links to the form. The Footer and the phone menu link to it too.
 - Admins see the registrations at `/admin/members` (`pages/admin/AdminMembers.jsx`),
-  newest first, and can delete one. The Dashboard shows how many there are.
+  newest first, with each person's type and birthday (shown as "12 March", or
+  "12 March 2004" when they gave the year), and can delete one. The Dashboard shows how many there are.
 - The backend part (the `members` table, its migration and the `/members` endpoints)
   is in its own pull request. Until that is merged and you have run
   `alembic upgrade head`, the form shows an error when submitted and the Members page

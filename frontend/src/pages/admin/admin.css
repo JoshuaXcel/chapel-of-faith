@@ -421,8 +421,16 @@
 /* Members page: the table has 7 columns, so slightly less space around each cell */
 .tbl-tight th,
 .tbl-tight td {
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+/* Members page: small grey text under a name (registration date) or a phone number (email) */
+.cell-sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-3);
+  white-space: nowrap;
 }
 /* Members page: small tag beside a name when they asked to join the WhatsApp groups */
 .wa-tag {
