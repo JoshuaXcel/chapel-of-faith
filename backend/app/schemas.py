@@ -1,11 +1,34 @@
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 from datetime import date, datetime
-from typing import Literal
+from typing import Annotated, Literal
 import calendar
 
+from app.clock import church_today, to_church_time
+
+# Size limits for text sent to the API.
+# Short fields match their column size in models/, so text that is too long gets a
+# clear 422 instead of a database error (500). Long texts (Text columns) have no limit
+# in the database, so we pick 10,000 characters: plenty for a devotion or a bio, and
+# nobody can post megabytes of text.
+NAME_MAX = 120
+LONG_TEXT_MAX = 10_000
+URL_MAX = 500
+
+# links saved in the database end up in <img src> / <audio src> on the website,
+# so only normal web addresses and our own uploaded files are accepted
+# (this blocks things like "javascript:..." links)
+def check_link(value: str) -> str:
+    if not value.startswith(("https://", "http://", "/media/")):
+        raise ValueError("must be a web address (https://...) or an uploaded file (/media/...)")
+    return value
+
+Link = Annotated[str, Field(max_length=URL_MAX), AfterValidator(check_link)]
+
 class LoginRequest(BaseModel):
-    email: str
-    password: str
+    # a plain string (not EmailStr) so a typo gets the same "Incorrect email or password"
+    email: str = Field(max_length=255)
+    # bcrypt only uses 72 bytes, 128 characters is more than enough for any real password
+    password: str = Field(max_length=128)
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -68,20 +91,46 @@ class EventOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class EventCreate(BaseModel):
-    title: str
-    description: str | None = None
-    location: str
+    title: str = Field(min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=LONG_TEXT_MAX)
+    location: str = Field(min_length=1, max_length=200)
     starts_at: datetime
     ends_at: datetime | None = None
-    image_url: str | None = None
+    image_url: Link | None = None
+
+    # times are saved as church time without a zone (see app/clock.py)
+    @field_validator("starts_at", "ends_at")
+    @classmethod
+    def use_church_time(cls, value):
+        return to_church_time(value)
+
+    # an event can't finish before it starts
+    @model_validator(mode="after")
+    def check_end_after_start(self):
+        if self.ends_at is not None and self.ends_at < self.starts_at:
+            raise ValueError("ends_at cannot be before starts_at")
+        return self
 
 class EventUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    location: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=LONG_TEXT_MAX)
+    location: str | None = Field(default=None, min_length=1, max_length=200)
     starts_at: datetime | None = None
     ends_at: datetime | None = None
-    image_url: str | None = None
+    image_url: Link | None = None
+
+    @field_validator("starts_at", "ends_at")
+    @classmethod
+    def use_church_time(cls, value):
+        return to_church_time(value)
+
+    # if both times are sent, check them here (if only one is sent, the router
+    # compares it with the saved event)
+    @model_validator(mode="after")
+    def check_end_after_start(self):
+        if self.ends_at is not None and self.starts_at is not None and self.ends_at < self.starts_at:
+            raise ValueError("ends_at cannot be before starts_at")
+        return self
 
     # these fields can't be empty in the database, so null gives 422 instead of a 500
     @field_validator("title", "location", "starts_at")
@@ -92,20 +141,20 @@ class EventUpdate(BaseModel):
         return value
 
 class SermonCreate(BaseModel):
-    title: str
-    description: str | None = None
-    preacher: str
+    title: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=LONG_TEXT_MAX)
+    preacher: str = Field(min_length=1, max_length=NAME_MAX)
     preached_on: date
-    scripture: str | None = None
-    audio_url: str | None = None
+    scripture: str | None = Field(default=None, max_length=120)
+    audio_url: Link | None = None
 
 class SermonUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    preacher: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=LONG_TEXT_MAX)
+    preacher: str | None = Field(default=None, min_length=1, max_length=NAME_MAX)
     preached_on: date | None = None
-    scripture: str | None = None
-    audio_url: str | None = None
+    scripture: str | None = Field(default=None, max_length=120)
+    audio_url: Link | None = None
 
     # these fields can't be empty in the database, so null gives 422 instead of a 500
     @field_validator("title", "preacher", "preached_on")
@@ -116,18 +165,18 @@ class SermonUpdate(BaseModel):
         return value
 
 class DevotionCreate(BaseModel):
-    title: str
-    scripture: str
-    body: str
+    title: str = Field(min_length=1, max_length=200)
+    scripture: str = Field(min_length=1, max_length=120)
+    body: str = Field(min_length=1, max_length=LONG_TEXT_MAX)
     devotion_date: date
-    author: str | None = None
+    author: str | None = Field(default=None, max_length=NAME_MAX)
 
 class DevotionUpdate(BaseModel):
-    title: str | None = None
-    scripture: str | None = None
-    body: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    scripture: str | None = Field(default=None, min_length=1, max_length=120)
+    body: str | None = Field(default=None, min_length=1, max_length=LONG_TEXT_MAX)
     devotion_date: date | None = None
-    author: str | None = None
+    author: str | None = Field(default=None, max_length=NAME_MAX)
 
     # these fields can't be empty in the database, so null gives 422 instead of a 500
     @field_validator("title", "scripture", "body", "devotion_date")
@@ -138,17 +187,17 @@ class DevotionUpdate(BaseModel):
         return value
 
 class LeadershipCreate(BaseModel):
-    name: str
-    role: str
-    bio: str | None = None
-    photo_url: str | None = None
+    name: str = Field(min_length=1, max_length=NAME_MAX)
+    role: str = Field(min_length=1, max_length=NAME_MAX)
+    bio: str | None = Field(default=None, max_length=LONG_TEXT_MAX)
+    photo_url: Link | None = None
     display_order: int = 0
 
 class LeadershipUpdate(BaseModel):
-    name: str | None = None
-    role: str | None = None
-    bio: str | None = None
-    photo_url: str | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=NAME_MAX)
+    role: str | None = Field(default=None, min_length=1, max_length=NAME_MAX)
+    bio: str | None = Field(default=None, max_length=LONG_TEXT_MAX)
+    photo_url: Link | None = None
     display_order: int | None = None
 
     # these fields can't be empty in the database, so null gives 422 instead of a 500
@@ -160,12 +209,12 @@ class LeadershipUpdate(BaseModel):
         return value
 
 class GalleryImageCreate(BaseModel):
-    image_url: str
-    caption: str | None = None
+    image_url: Link
+    caption: str | None = Field(default=None, max_length=255)
 
 class GalleryImageUpdate(BaseModel):
-    image_url: str | None = None
-    caption: str | None = None
+    image_url: Link | None = None
+    caption: str | None = Field(default=None, max_length=255)
 
     # these fields can't be empty in the database, so null gives 422 instead of a 500
     @field_validator("image_url")
@@ -187,7 +236,8 @@ Level = Literal["100L", "200L", "300L", "400L", "500L"]
 class MemberCreate(BaseModel):
     full_name: str = Field(min_length=1, max_length=120)
     phone: str = Field(min_length=1, max_length=30)
-    email: str | None = Field(default=None, max_length=255)
+    # EmailStr checks it really looks like an email address
+    email: EmailStr | None = None
     gender: str | None = Field(default=None, max_length=20)
     member_type: MemberType
     department: str | None = Field(default=None, max_length=120)
@@ -211,7 +261,7 @@ class MemberCreate(BaseModel):
     @field_validator("birth_year")
     @classmethod
     def check_birth_year(cls, value):
-        this_year = date.today().year
+        this_year = church_today().year
         if value is not None and not 1900 <= value <= this_year:
             raise ValueError(f"must be between 1900 and {this_year}")
         return value

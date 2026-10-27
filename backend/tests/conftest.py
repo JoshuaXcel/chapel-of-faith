@@ -1,14 +1,23 @@
+import os
+import shutil
+import tempfile
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import sessionmaker
 
+# uploads made by the tests go to a temporary folder, never the real backend/media.
+# This has to happen before the app is imported, because the app reads MEDIA_DIR when it starts
+TEST_MEDIA_DIR = tempfile.mkdtemp(prefix="chapel-test-media-")
+os.environ["MEDIA_DIR"] = TEST_MEDIA_DIR
+
 from app.config import settings
 from app.database import Base, get_db
 from app.main import app
 from app.models import Admin
-from app.routers import images
+from app import rate_limit
 from app.security import create_access_token, hash_password
 
 TEST_PASSWORD = "test-password-123"
@@ -127,12 +136,24 @@ def viewer_headers(viewer):
 
 
 @pytest.fixture
-def media_dir(tmp_path, monkeypatch):
-    # uploads go to a temporary folder instead of the real backend/media.
-    # images.py saves to MEDIA_DIR and StaticFiles serves the "media" folder of the
-    # current directory, so we move into tmp_path and point MEDIA_DIR there too.
-    folder = tmp_path / "media"
-    folder.mkdir()
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(images, "MEDIA_DIR", folder)
+def media_dir():
+    # the temporary media folder from the top of this file, emptied before each test
+    folder = settings.media_dir
+    for path in folder.iterdir():
+        path.unlink()
     return folder
+
+
+@pytest.fixture(scope="session", autouse=True)
+def remove_test_media_dir():
+    yield
+    shutil.rmtree(TEST_MEDIA_DIR, ignore_errors=True)
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limits():
+    # the "too many tries" counters live in memory, so each test starts with clean counts
+    rate_limit.login_failures_per_email.clear()
+    rate_limit.login_failures_per_ip.clear()
+    rate_limit.member_signups_per_ip.clear()
+    yield

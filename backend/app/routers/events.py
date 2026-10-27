@@ -1,9 +1,8 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.clock import church_now
 from app.database import get_db
 from app.models.event import Event
 from app.schemas import EventOut, EventCreate, EventUpdate
@@ -13,7 +12,8 @@ router = APIRouter(prefix="/events", tags=["events"])
 
 @router.get("", response_model=list[EventOut])
 def list_events(db: Session = Depends(get_db)):
-    events = db.scalars(select(Event).where(Event.starts_at >= datetime.now()).order_by(Event.starts_at)).all()
+    # church time, not the server's clock (see app/clock.py)
+    events = db.scalars(select(Event).where(Event.starts_at >= church_now()).order_by(Event.starts_at)).all()
     return events
 
 @router.get("/{event_id}", response_model=EventOut)
@@ -39,6 +39,10 @@ def update_event(event_id: int, payload: EventUpdate, db: Session = Depends(get_
     data = payload.model_dump(exclude_unset=True)
     for key, value in data.items():
         setattr(event, key, value)
+    # only one of the two times may have been sent, so compare after merging with the saved event
+    if event.ends_at is not None and event.ends_at < event.starts_at:
+        db.rollback()  # undo the changes we just made on the object
+        raise HTTPException(status_code=422, detail="ends_at cannot be before starts_at")
     db.commit()
     db.refresh(event)
     return event

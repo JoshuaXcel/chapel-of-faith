@@ -1,5 +1,9 @@
 from datetime import date
 
+import pytest
+
+from app import rate_limit
+
 
 MEMBER = {
     "full_name": "Ada Okafor",
@@ -266,3 +270,65 @@ def test_delete_missing_member_returns_404(client, editor_headers):
     response = client.delete("/members/999", headers=editor_headers)
 
     assert response.status_code == 404
+
+
+# --- size limits and email ---
+
+@pytest.mark.parametrize("field, limit", [
+    ("full_name", 120), ("phone", 30), ("gender", 20), ("department", 120), ("hostel_or_address", 255),
+])
+def test_register_with_too_long_text_returns_422(client, field, limit):
+    response = register(client, **{field: "a" * (limit + 1)})
+
+    assert response.status_code == 422
+
+
+def test_register_with_invalid_email_returns_422(client):
+    response = register(client, email="not-an-email")
+
+    assert response.status_code == 422
+
+
+def test_register_with_valid_email_is_ok(client):
+    response = register(client, email="ada@gmail.com")
+
+    assert response.status_code == 201
+    assert response.json()["email"] == "ada@gmail.com"
+
+
+def test_register_with_no_email_is_ok(client):
+    response = register(client, email=None)
+
+    assert response.status_code == 201
+
+
+# --- too many sign-ups ---
+
+def test_too_many_sign_ups_from_one_address_returns_429(client, monkeypatch):
+    # a small limit so the test is quick (the real one is 30 per 10 minutes)
+    monkeypatch.setattr(rate_limit.member_signups_per_ip, "max_attempts", 3)
+    for _ in range(3):
+        assert register(client).status_code == 201
+
+    response = register(client)
+
+    assert response.status_code == 429
+    assert int(response.headers["Retry-After"]) > 0
+    assert "Too many sign-ups" in response.json()["detail"]
+
+
+def test_sign_ups_are_allowed_again_after_the_window(client, monkeypatch):
+    now = [1000.0]
+    monkeypatch.setattr(rate_limit.member_signups_per_ip, "max_attempts", 3)
+    monkeypatch.setattr(rate_limit.member_signups_per_ip, "clock", lambda: now[0])
+    for _ in range(3):
+        register(client)
+    assert register(client).status_code == 429
+
+    now[0] += 10 * 60
+
+    assert register(client).status_code == 201
+
+
+def test_real_sign_up_limit_is_generous_enough_for_a_sign_up_drive():
+    assert rate_limit.member_signups_per_ip.max_attempts >= 30
