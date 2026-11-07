@@ -12,11 +12,18 @@ export const CHURCH = {
   whatsapp: null,
 }
 
-// Social media pages. Replace '#' with the real page addresses.
+// The Chapel's YouTube channel. Sunday and midweek services are posted here, and
+// livestreams go out on it too. Every "Watch live" button in the site points here.
+export const YOUTUBE_URL = 'https://www.youtube.com/@thechapeloffaithfuta2'
+
+// Social media pages, in the order the footer shows them.
+// Each url is the church's own public page. Links open in a new tab (see Footer.jsx).
+// In plain terms: this is a Python list of dicts, the same idea as a list of
+// Pydantic models that the frontend loops over to draw the icons.
 export const SOCIAL_LINKS = [
-  { label: 'Facebook', icon: 'facebook', url: '#' },
-  { label: 'Instagram', icon: 'instagram', url: '#' },
-  { label: 'YouTube', icon: 'youtube', url: '#' },
+  { label: 'Facebook', icon: 'facebook', url: 'https://www.facebook.com/thechapeloffaithfuta/' },
+  { label: 'Instagram', icon: 'instagram', url: 'https://www.instagram.com/thechapeloffaithfuta22/' },
+  { label: 'YouTube', icon: 'youtube', url: YOUTUBE_URL },
 ]
 
 // What happens at the Chapel every week, day by day.

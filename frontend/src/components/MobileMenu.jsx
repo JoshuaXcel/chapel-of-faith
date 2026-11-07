@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon.jsx'
-import { SOCIAL_LINKS, mainService } from '../siteInfo.js'
+import { SOCIAL_LINKS, YOUTUBE_URL, mainService } from '../siteInfo.js'
 import emblem from '../assets/emblem.png'
 import './MobileMenu.css'
 
@@ -35,7 +35,14 @@ function MobileMenu({ onClose }) {
         </button>
       </div>
 
-      <Link className="mm-live" to="/sermons" onClick={onClose}>
+      {/* Opens the Chapel's YouTube channel in a new tab; the menu closes first */}
+      <a
+        className="mm-live"
+        href={YOUTUBE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClose}
+      >
         <span className="flex g12">
           <span className="chip chip-dark">Off air</span>
           <b>Watch live</b>
@@ -43,7 +50,7 @@ function MobileMenu({ onClose }) {
         <span className="small">
           {mainService.short} {mainService.time}
         </span>
-      </Link>
+      </a>
 
       <nav className="mm-nav" aria-label="Mobile">
         {links.map((link) => (
@@ -70,7 +77,13 @@ function MobileMenu({ onClose }) {
 
       <div className="mm-social">
         {SOCIAL_LINKS.map((social) => (
-          <a key={social.label} href={social.url} aria-label={social.label}>
+          <a
+            key={social.label}
+            href={social.url}
+            aria-label={social.label}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Icon name={social.icon} />
           </a>
         ))}

@@ -12,8 +12,9 @@ import useFetch from '../useFetch.js'
 import { mediaUrl } from '../api.js'
 import { currentDevotion } from '../devotions.js'
 import { dayMonth } from '../format.js'
-import { mainService } from '../siteInfo.js'
+import { mainService, YOUTUBE_URL } from '../siteInfo.js'
 import emblem from '../assets/emblem.png'
+import heroPhoto from '../assets/photos/hero-congregation.jpg'
 
 // The "I want to…" shortcut tiles
 const paths = [
@@ -60,8 +61,9 @@ function Home() {
                 <Button to="/contact" size="lg">
                   Plan a visit <Icon name="compass" />
                 </Button>
-                <Button to="/sermons" variant="ghost-light" size="lg">
-                  <Icon name="play" /> Watch live
+                {/* The livestream is on the Chapel's YouTube channel, so this opens it in a new tab */}
+                <Button href={YOUTUBE_URL} variant="ghost-light" size="lg">
+                  <Icon name="play" /> Watch live on YouTube
                 </Button>
               </div>
               <div className="verse-strip">
@@ -70,7 +72,12 @@ function Home() {
               </div>
             </div>
             <div className="hero-media">
-              <Photo dark caption="Photo: the congregation at Sunday worship" />
+              <Photo
+                dark
+                src={heroPhoto}
+                alt="The choir and congregation at a Sunday service of The Chapel of Faith, FUTA"
+                caption="Photo: the congregation at Sunday worship"
+              />
               <div className="float-card">
                 <span className="datetile">
                   <b>{mainService.short}</b>
