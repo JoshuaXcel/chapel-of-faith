@@ -1,5 +1,6 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
+import Splash from './components/Splash.jsx'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Ministries from './pages/Ministries.jsx'
@@ -30,48 +31,55 @@ import AdminMembers from './pages/admin/AdminMembers.jsx'
 // Public pages sit inside the Layout route, so they get the Navbar and Footer.
 // Admin pages sit inside AdminLayout (sidebar) and need a login (ProtectedRoute).
 function App() {
-  return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/ministries" element={<Ministries />} />
-        <Route path="/sermons" element={<Sermons />} />
-        {/* ":id" is a URL parameter: /sermons/3 shows the sermon with id 3 */}
-        <Route path="/sermons/:id" element={<SermonDetail />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/events/:id" element={<EventDetail />} />
-        <Route path="/devotion" element={<Devotion />} />
-        <Route path="/devotion/:id" element={<DevotionDetail />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/give" element={<Give />} />
-        <Route path="/prayer" element={<Prayer />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/membership" element={<Membership />} />
-        {/* "*" matches any other URL, so unknown pages show the 404 page */}
-        <Route path="*" element={<NotFound />} />
-      </Route>
+  // The opening splash shows on the public site only; the staff area opens straight away
+  const { pathname } = useLocation()
+  const showSplash = !pathname.startsWith('/admin')
 
-      {/* Staff area. Everything under /admin needs a login, except the login page. */}
-      <Route path="/admin/login" element={<Login />} />
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        {/* "index" = the page shown at /admin itself */}
-        <Route index element={<Dashboard />} />
-        <Route path="events" element={<AdminEvents />} />
-        <Route path="sermons" element={<AdminSermons />} />
-        <Route path="devotions" element={<AdminDevotions />} />
-        <Route path="leadership" element={<AdminLeadership />} />
-        <Route path="gallery" element={<AdminGallery />} />
-        <Route path="members" element={<AdminMembers />} />
-      </Route>
-    </Routes>
+  return (
+    <>
+    {showSplash && <Splash />}
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/ministries" element={<Ministries />} />
+          <Route path="/sermons" element={<Sermons />} />
+          {/* ":id" is a URL parameter: /sermons/3 shows the sermon with id 3 */}
+          <Route path="/sermons/:id" element={<SermonDetail />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/devotion" element={<Devotion />} />
+          <Route path="/devotion/:id" element={<DevotionDetail />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/give" element={<Give />} />
+          <Route path="/prayer" element={<Prayer />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/membership" element={<Membership />} />
+          {/* "*" matches any other URL, so unknown pages show the 404 page */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
+
+        {/* Staff area. Everything under /admin needs a login, except the login page. */}
+        <Route path="/admin/login" element={<Login />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* "index" = the page shown at /admin itself */}
+          <Route index element={<Dashboard />} />
+          <Route path="events" element={<AdminEvents />} />
+          <Route path="sermons" element={<AdminSermons />} />
+          <Route path="devotions" element={<AdminDevotions />} />
+          <Route path="leadership" element={<AdminLeadership />} />
+          <Route path="gallery" element={<AdminGallery />} />
+          <Route path="members" element={<AdminMembers />} />
+        </Route>
+      </Routes>
+    </>
   )
 }
 

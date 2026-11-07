@@ -25,8 +25,16 @@ function Footer() {
               are welcome.
             </p>
             <div className="soc">
+              {/* Each social icon is a plain link. target="_blank" opens it in a new tab;
+                  rel="noopener noreferrer" stops the new page from reaching back into this one. */}
               {SOCIAL_LINKS.map((social) => (
-                <a key={social.label} href={social.url} aria-label={social.label}>
+                <a
+                  key={social.label}
+                  href={social.url}
+                  aria-label={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Icon name={social.icon} />
                 </a>
               ))}

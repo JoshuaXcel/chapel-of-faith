@@ -3,7 +3,8 @@ import Icon from '../components/Icon.jsx'
 import Photo from '../components/Photo.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import ComingSoon from '../components/ComingSoon.jsx'
-import { allActivities, mainService } from '../siteInfo.js'
+import { allActivities, mainService, YOUTUBE_URL } from '../siteInfo.js'
+import choirPhoto from '../assets/photos/cyf-choir.jpg'
 
 // The CYF meeting from the weekly list in siteInfo.js (the item named "CYF…"),
 // so its day and time are only typed in one place
@@ -20,7 +21,13 @@ const cyfActivities = [
 
 const units = [
   { icon: 'music', name: 'Choir', text: 'Lead the congregation in praise at every service.' },
-  { icon: 'monitor', name: 'Media', text: 'Sound, livestream, photos and the Chapel’s online pages.' },
+  {
+    icon: 'monitor',
+    name: 'Media',
+    text: 'Sound, livestream, photos and the Chapel’s online pages.',
+    // The livestream and the recorded services are on the Chapel's YouTube channel
+    link: { label: 'Watch on YouTube', url: YOUTUBE_URL },
+  },
   { icon: 'star', name: 'Drama', text: 'Tell the gospel through stage and film.' },
   { icon: 'users', name: 'Ushering', text: 'Welcome every worshipper and keep services running well.' },
   { icon: 'heart', name: 'Prayer', text: 'Stand in the gap for the campus and the Chapel.' },
@@ -52,7 +59,11 @@ function Ministries() {
       <section>
         <div className="wrap">
           <div className="feature">
-            <Photo caption="Photo: CYF fellowship" />
+            <Photo
+              src={choirPhoto}
+              alt="Members of the Chapel choir in robes, singing during a service"
+              caption="Photo: CYF fellowship"
+            />
             <div className="fbody">
               <span className="eyebrow">CYF · Chapel Youth Fellowship</span>
               <h2 className="mt16">Together we shall stand</h2>
@@ -105,6 +116,12 @@ function Ministries() {
                 </span>
                 <h3>{unit.name}</h3>
                 <p>{unit.text}</p>
+                {/* Only some units have a link; this one opens the YouTube channel in a new tab */}
+                {unit.link && (
+                  <a className="link" href={unit.link.url} target="_blank" rel="noopener noreferrer">
+                    {unit.link.label} <Icon name="arrowRight" />
+                  </a>
+                )}
               </div>
             ))}
           </div>

@@ -1076,6 +1076,7 @@ button.amt { cursor: pointer; }
   .map { height: 300px; border-radius: 22px; }
   .min { display: grid; grid-template-columns: 52px 1fr; column-gap: 16px; row-gap: 2px; min-height: 0; padding: 20px; align-items: start; }
   .min .icon-tile { grid-row: span 2; }
+  .min .link { grid-column: 2; justify-self: start; }
   .min h3 { font-size: 20px; align-self: end; }
   .min p { font-size: 14.5px; }
   .cc { display: grid; grid-template-columns: 52px 1fr; column-gap: 16px; padding: 18px; align-items: center; }

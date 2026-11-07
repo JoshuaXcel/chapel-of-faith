@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import Icon from './Icon.jsx'
 import MobileMenu from './MobileMenu.jsx'
 import emblem from '../assets/emblem.png'
+import { YOUTUBE_URL } from '../siteInfo.js'
 import './Navbar.css'
 
 // The links in the top bar. MobileMenu shows its own longer list on phones.
@@ -39,9 +40,15 @@ function Navbar() {
         </nav>
 
         <div className="hdr-cta">
-          <Link className="livepill hide-m" to="/sermons">
+          {/* The livestream lives on the Chapel's YouTube channel, so this opens it in a new tab */}
+          <a
+            className="livepill hide-m"
+            href={YOUTUBE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span className="dot"></span>Watch live
-          </Link>
+          </a>
           <Link className="btn btn-gold btn-sm" to="/give">
             Give
           </Link>

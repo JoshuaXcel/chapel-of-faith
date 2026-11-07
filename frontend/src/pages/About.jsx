@@ -7,6 +7,7 @@ import ErrorMessage from '../components/ErrorMessage.jsx'
 import useFetch from '../useFetch.js'
 import { mediaUrl } from '../api.js'
 import emblem from '../assets/emblem.png'
+import campusPhoto from '../assets/photos/about-campus-aerial.jpg'
 
 const timeline = [
   {
@@ -56,7 +57,12 @@ function About() {
 
       <section>
         <div className="wrap">
-          <Photo className="about-photo" caption="Photo: the Chapel of Faith building" />
+          <Photo
+            className="about-photo"
+            src={campusPhoto}
+            alt="Aerial view of the Chapel of Faith building on the FUTA campus, Akure"
+            caption="Photo: the Chapel of Faith building"
+          />
         </div>
       </section>
 
