@@ -1,4 +1,5 @@
-// Home.jsx — the home page: the hero with its photo slideshow, service times,
+// Home.jsx — the home page: the photos pinned behind the whole page (a slideshow that stays
+// still while the sections scroll over it), the hero words, service times,
 // weekly activities, membership, shortcuts, devotion, sermon, events, gallery and giving.
 // Each section fetches its own data (useFetch), so one slow section does not hold up the rest.
 // Python comparison: a page component is like a FastAPI route that builds one response
@@ -7,7 +8,8 @@ import { Link } from 'react-router-dom'
 import Button from '../components/Button.jsx'
 import Icon from '../components/Icon.jsx'
 import Photo from '../components/Photo.jsx'
-import HeroSlideshow from '../components/HeroSlideshow.jsx'
+import PhotoSlideshow from '../components/PhotoSlideshow.jsx'
+import { HERO_SLIDES } from '../heroSlides.js'
 import Loading from '../components/Loading.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import EventCard from '../components/EventCard.jsx'
@@ -42,12 +44,17 @@ function Home() {
   const devotion = devotions.data && currentDevotion(devotions.data)
 
   return (
-    <>
+    <div className="home-page">
+      {/* The photos behind the whole home page. This layer is fixed to the screen, so it stays
+          still while the sections scroll over it. (position: fixed, the same idea as a background
+          that does not move; it works on phones, where background-attachment: fixed does not) */}
+      <div className="pinned-bg" aria-hidden="true">
+        <PhotoSlideshow slides={HERO_SLIDES} className="pinned-slideshow" />
+      </div>
+
       {/* Hero */}
-      <section>
+      <section className="hero-section">
         <div className="hero-shell">
-          {/* The photos behind the hero take turns, fading into each other under a dark wash */}
-          <HeroSlideshow />
           {/* The three thin gold circles in the corner are only decoration */}
           <span className="ring ring-1"></span>
           <span className="ring ring-2"></span>
@@ -326,7 +333,7 @@ function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   )
 }
 

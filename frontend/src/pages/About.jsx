@@ -1,3 +1,8 @@
+// About.jsx — the About page: the story, the values and the leadership.
+// The aerial photo at the top drifts slowly like a drone shot (CSS only, see public.css
+// "About photo"), and it stops moving for visitors who asked for less motion.
+// Python comparison: like a FastAPI route that returns a page of data, here built from
+// one fetch (useFetch) for the leaders.
 import Button from '../components/Button.jsx'
 import Icon from '../components/Icon.jsx'
 import Photo from '../components/Photo.jsx'
@@ -7,7 +12,8 @@ import ErrorMessage from '../components/ErrorMessage.jsx'
 import useFetch from '../useFetch.js'
 import { mediaUrl } from '../api.js'
 import emblem from '../assets/emblem.png'
-import campusPhoto from '../assets/photos/about-campus-aerial.jpg'
+// The larger copy of the campus aerial (1600 px wide), so the slow zoom stays sharp
+import campusPhoto from '../assets/photos/hero/hero-02-campus-aerial.jpg'
 
 const timeline = [
   {
@@ -58,7 +64,7 @@ function About() {
       <section>
         <div className="wrap">
           <Photo
-            className="about-photo"
+            className="about-photo drone-motion"
             src={campusPhoto}
             alt="Aerial view of the Chapel of Faith building on the FUTA campus, Akure"
             caption="Photo: the Chapel of Faith building"

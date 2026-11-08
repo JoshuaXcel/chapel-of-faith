@@ -20,14 +20,15 @@
   border: 1px solid rgba(243,193,87,.16);
   pointer-events: none;
 }
-/* The photos behind the hero (HeroSlideshow.jsx). They sit under the text, which is raised above them. */
-.hero-slides {
+/* The photo slideshow (PhotoSlideshow.jsx). The photos sit under the text, which is raised above them.
+   Used by the pinned Home background and by the CYF card on the Ministries page. */
+.slideshow {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
 }
-.hero-slide {
+.slideshow-slide {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -38,12 +39,12 @@
   transition: opacity 2.2s ease-in-out; /* the slow crossfade between photos */
   animation: hero-drift 16s ease-in-out infinite alternate; /* a very gentle zoom, so the photo never stands still */
 }
-.hero-slide.prev {
+.slideshow-slide.prev {
   opacity: 1; /* the photo fading out stays solid underneath the one fading in */
   z-index: 1;
   transition: none;
 }
-.hero-slide.on {
+.slideshow-slide.on {
   opacity: 1;
   z-index: 2;
 }
@@ -53,10 +54,10 @@
 }
 /* A visitor who asked for less motion sees the first photo still, with no zoom and no fade */
 @media (prefers-reduced-motion: reduce) {
-  .hero-slide { animation: none; transition: none; transform: none; }
+  .slideshow-slide { animation: none; transition: none; transform: none; }
 }
 /* A dark wash over the photos, darkest behind the words on the left, so the white text stays readable */
-.hero-scrim {
+.slideshow-scrim {
   position: absolute;
   inset: 0;
   z-index: 3; /* above every photo */
@@ -64,6 +65,46 @@
     linear-gradient(90deg, rgba(14,6,24,.9) 0%, rgba(14,6,24,.74) 50%, rgba(14,6,24,.52) 100%),
     linear-gradient(180deg, rgba(14,6,24,.3) 0%, rgba(14,6,24,.78) 100%);
 }
+
+/* Home: the pinned background. One photo layer is fixed to the screen behind the whole page,
+   so the sections scroll over the same photos. Only the Home page has it. */
+.home-page {
+  position: relative;
+  isolation: isolate; /* keeps the fixed layer behind the page content, inside this page only */
+}
+.pinned-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--plum-950);
+  pointer-events: none;
+}
+/* One dark wash over the whole screen, so the hero words and the panels read well */
+.pinned-slideshow .slideshow-scrim {
+  background: linear-gradient(180deg, rgba(14,6,24,.8) 0%, rgba(14,6,24,.78) 40%, rgba(14,6,24,.86) 100%);
+}
+/* The hero no longer has its own background: the pinned photos show through it */
+.home-page .hero-shell {
+  background: none;
+}
+/* Each section below the hero is a translucent panel, so its words stay readable over the moving photos */
+.home-page > section:not(.hero-section) {
+  margin: 0 14px 14px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(252, 249, 244, .9);
+}
+.home-page > section.bg-white {
+  background: rgba(255, 255, 255, .92);
+}
+.home-page > section.bg-sand {
+  background: rgba(246, 239, 228, .95);
+}
+.home-page > section.wa {
+  background-color: rgba(40, 12, 46, .93);
+}
+
 .hero-grid {
   position: relative;
   z-index: 2;
@@ -860,9 +901,81 @@
 .motto-section { padding-bottom: 112px; }
 .motto-center { justify-content: center; padding: 56px; }
 
+/* Ministries: the CYF card. The youth photos fill it behind the words (PhotoSlideshow.jsx). */
+.cyf-section {
+  padding: 56px 0 24px;
+}
+.cyf-feature {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  border-radius: 32px;
+  background: var(--plum-900);
+  color: #fff;
+}
+.cyf-slideshow .slideshow-scrim {
+  /* darkest behind the text on the left, so the heading, times and chips read clearly */
+  background:
+    linear-gradient(90deg, rgba(14,6,24,.92) 0%, rgba(14,6,24,.8) 55%, rgba(14,6,24,.5) 100%),
+    linear-gradient(180deg, rgba(14,6,24,.2) 0%, rgba(14,6,24,.7) 100%);
+}
+.cyf-body {
+  position: relative;
+  z-index: 4; /* above the photos and the dark wash */
+  max-width: 660px;
+  padding: 72px 64px;
+}
+.cyf-body h2 {
+  color: #fff;
+}
+.cyf-body .lead {
+  color: rgba(255, 255, 255, .86);
+}
+.cyf-body .kv dt {
+  color: rgba(255, 255, 255, .68);
+}
+.cyf-body .kv dd {
+  color: #fff;
+}
+.cyf-body .tag {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .3);
+  color: #fff;
+}
+.cyf-body .tag .i {
+  color: #f3c157;
+}
+
 /* Ministries */
 .counsel-section { padding-bottom: 112px; }
 .counsel-lead { color: rgba(255, 255, 255, .76); }
+
+/* About: the campus aerial drifts slowly, like a drone shot, in a 28 second loop.
+   It starts a little soft, sharpens as it zooms in, pulls back out, and drifts from the new
+   auditorium (left) to the old chapel (right). Only transform and filter move, so it stays
+   smooth on phones. Visitors who asked for less motion see the still photo (see the rule below). */
+.about-photo.drone-motion .ph-img {
+  transform-origin: 50% 50%;
+  animation: about-drone 28s ease-in-out infinite;
+  will-change: transform, filter;
+}
+@keyframes about-drone {
+  0% { transform: scale(1) translate3d(0, 0, 0); filter: blur(1.5px); }
+  25% { transform: scale(1.12) translate3d(4%, 0, 0); filter: blur(0); }
+  50% { transform: scale(1.2) translate3d(-5%, 0, 0); filter: blur(0); }
+  75% { transform: scale(1.1) translate3d(0, 0, 0); filter: blur(0.4px); }
+  100% { transform: scale(1) translate3d(0, 0, 0); filter: blur(1.5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-photo.drone-motion .ph-img {
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+}
 
 /* Sermons */
 .sermon-list { padding-top: 72px; }
@@ -1076,7 +1189,7 @@ button.amt { cursor: pointer; }
   .hero-grid { grid-template-columns: 1fr; gap: 36px; padding: 28px 22px 22px; }
   .hero-media { min-height: 0; justify-content: flex-start; }
   .float-card { margin: 8px 0 0; min-width: 0; }
-  .hero-scrim { background: linear-gradient(180deg, rgba(14,6,24,.6) 0%, rgba(14,6,24,.82) 100%); }
+  .pinned-slideshow .slideshow-scrim { background: linear-gradient(180deg, rgba(14,6,24,.8) 0%, rgba(14,6,24,.84) 100%); }
   .verse-strip { margin-top: 28px; flex-direction: column; align-items: flex-start; gap: 8px; }
   .hero-actions { margin-top: 30px; }
   .hero-actions .btn { flex: 1; }
@@ -1107,6 +1220,8 @@ button.amt { cursor: pointer; }
   .feature { grid-template-columns: 1fr; border-radius: 24px; }
   .feature .ph { min-height: 220px; }
   .feature .fbody { padding: 28px; }
+  .cyf-feature { min-height: 0; }
+  .cyf-body { padding: 48px 24px; }
   .counsel { grid-template-columns: 1fr; padding: 32px 22px; border-radius: 28px; gap: 32px; }
   .formcard { padding: 22px; }
   .sermon-row { grid-template-columns: 44px 1fr 44px; gap: 14px; }
