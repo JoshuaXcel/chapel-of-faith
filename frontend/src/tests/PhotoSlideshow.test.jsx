@@ -1,5 +1,5 @@
-// Tests for the photo slideshow (PhotoSlideshow.jsx), used by the pinned Home background and
-// the CYF card: the first photo shows first, the photos take turns on a timer, a photo that
+// Tests for the photo slideshow (PhotoSlideshow.jsx), used by the Home hero and the CYF card:
+// the first photo shows first, the photos take turns on a timer, a photo that
 // fails is skipped, and a visitor who asked for less motion sees only the first photo.
 import { render, act, fireEvent } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

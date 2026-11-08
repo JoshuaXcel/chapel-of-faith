@@ -1,6 +1,6 @@
 // PhotoSlideshow.jsx — a row of photos that take turns, each one fading into the next.
-// It is used twice: as the photo behind the Home page (pinned, the whole page scrolls over it)
-// and as the photo behind the CYF section on the Ministries page. The text sits on top of it.
+// It is used twice: as the photo behind the words in the Home page hero, and as the photos
+// behind the CYF card on the Ministries page. The text sits on top of it, under a dark wash.
 // The first photo loads straight away; the rest start loading once it has arrived, so the
 // page stays quick. A photo that fails to load is skipped, and if none load, the plain
 // background behind it shows instead. A visitor whose device asks for less motion sees
