@@ -1,7 +1,13 @@
+// Home.jsx — the home page: the hero with its photo slideshow, service times,
+// weekly activities, membership, shortcuts, devotion, sermon, events, gallery and giving.
+// Each section fetches its own data (useFetch), so one slow section does not hold up the rest.
+// Python comparison: a page component is like a FastAPI route that builds one response
+// from several separate queries.
 import { Link } from 'react-router-dom'
 import Button from '../components/Button.jsx'
 import Icon from '../components/Icon.jsx'
 import Photo from '../components/Photo.jsx'
+import HeroSlideshow from '../components/HeroSlideshow.jsx'
 import Loading from '../components/Loading.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import EventCard from '../components/EventCard.jsx'
@@ -14,7 +20,6 @@ import { currentDevotion } from '../devotions.js'
 import { dayMonth } from '../format.js'
 import { mainService, YOUTUBE_URL } from '../siteInfo.js'
 import emblem from '../assets/emblem.png'
-import heroPhoto from '../assets/photos/hero-congregation.jpg'
 
 // The "I want to…" shortcut tiles
 const paths = [
@@ -41,6 +46,8 @@ function Home() {
       {/* Hero */}
       <section>
         <div className="hero-shell">
+          {/* The photos behind the hero take turns, fading into each other under a dark wash */}
+          <HeroSlideshow />
           {/* The three thin gold circles in the corner are only decoration */}
           <span className="ring ring-1"></span>
           <span className="ring ring-2"></span>
@@ -72,12 +79,6 @@ function Home() {
               </div>
             </div>
             <div className="hero-media">
-              <Photo
-                dark
-                src={heroPhoto}
-                alt="The choir and congregation at a Sunday service of The Chapel of Faith, FUTA"
-                caption="Photo: the congregation at Sunday worship"
-              />
               <div className="float-card">
                 <span className="datetile">
                   <b>{mainService.short}</b>
