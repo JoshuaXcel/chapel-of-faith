@@ -21,7 +21,7 @@
   pointer-events: none;
 }
 /* The photo slideshow (PhotoSlideshow.jsx). The photos sit under the text, which is raised above them.
-   Used by the pinned Home background and by the CYF card on the Ministries page. */
+   Used by the Home hero and by the CYF card on the Ministries page. */
 .slideshow {
   position: absolute;
   inset: 0;
@@ -64,45 +64,6 @@
   background:
     linear-gradient(90deg, rgba(14,6,24,.9) 0%, rgba(14,6,24,.74) 50%, rgba(14,6,24,.52) 100%),
     linear-gradient(180deg, rgba(14,6,24,.3) 0%, rgba(14,6,24,.78) 100%);
-}
-
-/* Home: the pinned background. One photo layer is fixed to the screen behind the whole page,
-   so the sections scroll over the same photos. Only the Home page has it. */
-.home-page {
-  position: relative;
-  isolation: isolate; /* keeps the fixed layer behind the page content, inside this page only */
-}
-.pinned-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  background: var(--plum-950);
-  pointer-events: none;
-}
-/* One dark wash over the whole screen, so the hero words and the panels read well */
-.pinned-slideshow .slideshow-scrim {
-  background: linear-gradient(180deg, rgba(14,6,24,.8) 0%, rgba(14,6,24,.78) 40%, rgba(14,6,24,.86) 100%);
-}
-/* The hero no longer has its own background: the pinned photos show through it */
-.home-page .hero-shell {
-  background: none;
-}
-/* Each section below the hero is a translucent panel, so its words stay readable over the moving photos */
-.home-page > section:not(.hero-section) {
-  margin: 0 14px 14px;
-  border-radius: 28px;
-  overflow: hidden;
-  background: rgba(252, 249, 244, .9);
-}
-.home-page > section.bg-white {
-  background: rgba(255, 255, 255, .92);
-}
-.home-page > section.bg-sand {
-  background: rgba(246, 239, 228, .95);
-}
-.home-page > section.wa {
-  background-color: rgba(40, 12, 46, .93);
 }
 
 .hero-grid {
@@ -1189,7 +1150,7 @@ button.amt { cursor: pointer; }
   .hero-grid { grid-template-columns: 1fr; gap: 36px; padding: 28px 22px 22px; }
   .hero-media { min-height: 0; justify-content: flex-start; }
   .float-card { margin: 8px 0 0; min-width: 0; }
-  .pinned-slideshow .slideshow-scrim { background: linear-gradient(180deg, rgba(14,6,24,.8) 0%, rgba(14,6,24,.84) 100%); }
+  .hero-shell .slideshow-scrim { background: linear-gradient(180deg, rgba(14,6,24,.6) 0%, rgba(14,6,24,.82) 100%); }
   .verse-strip { margin-top: 28px; flex-direction: column; align-items: flex-start; gap: 8px; }
   .hero-actions { margin-top: 30px; }
   .hero-actions .btn { flex: 1; }

@@ -1,5 +1,4 @@
-// Home.jsx — the home page: the photos pinned behind the whole page (a slideshow that stays
-// still while the sections scroll over it), the hero words, service times,
+// Home.jsx — the home page: the hero with its photo slideshow behind the words, service times,
 // weekly activities, membership, shortcuts, devotion, sermon, events, gallery and giving.
 // Each section fetches its own data (useFetch), so one slow section does not hold up the rest.
 // Python comparison: a page component is like a FastAPI route that builds one response
@@ -44,17 +43,12 @@ function Home() {
   const devotion = devotions.data && currentDevotion(devotions.data)
 
   return (
-    <div className="home-page">
-      {/* The photos behind the whole home page. This layer is fixed to the screen, so it stays
-          still while the sections scroll over it. (position: fixed, the same idea as a background
-          that does not move; it works on phones, where background-attachment: fixed does not) */}
-      <div className="pinned-bg" aria-hidden="true">
-        <PhotoSlideshow slides={HERO_SLIDES} className="pinned-slideshow" />
-      </div>
-
+    <>
       {/* Hero */}
-      <section className="hero-section">
+      <section>
         <div className="hero-shell">
+          {/* The photos behind the hero take turns, fading into each other under a dark wash */}
+          <PhotoSlideshow slides={HERO_SLIDES} className="hero-slideshow" />
           {/* The three thin gold circles in the corner are only decoration */}
           <span className="ring ring-1"></span>
           <span className="ring ring-2"></span>
@@ -333,7 +327,7 @@ function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }
 
