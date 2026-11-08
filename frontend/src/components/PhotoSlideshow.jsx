@@ -1,12 +1,14 @@
-// HeroSlideshow.jsx — the full-width photo behind the home page hero.
-// Several photos of the Chapel take turns, each one fading into the next behind the
-// dimmed text. The first photo loads straight away; the rest start loading once it has
-// arrived, so the page stays quick. A photo that fails to load is skipped, and if none
-// load, the plain gradient behind the hero shows instead. A visitor whose device asks for
-// less motion (the "reduce motion" setting) sees only the first photo, which does not move.
+// PhotoSlideshow.jsx — a row of photos that take turns, each one fading into the next.
+// It is used twice: as the photo behind the Home page (pinned, the whole page scrolls over it)
+// and as the photo behind the CYF section on the Ministries page. The text sits on top of it.
+// The first photo loads straight away; the rest start loading once it has arrived, so the
+// page stays quick. A photo that fails to load is skipped, and if none load, the plain
+// background behind it shows instead. A visitor whose device asks for less motion sees
+// only the first photo, which does not move.
 //
 // Python comparison: this is a little like a generator that yields the next photo every
 // few seconds (setInterval is the timer), with the state kept by React instead of a loop.
+// Props are like function arguments with defaults: slides=[...] is the list to show.
 import { useEffect, useState } from 'react'
 import { HERO_SLIDES, HERO_INTERVAL_MS } from '../heroSlides.js'
 
@@ -31,7 +33,8 @@ function nextWorking(from, failed, count) {
   return from
 }
 
-function HeroSlideshow({ slides = HERO_SLIDES }) {
+// className adds a class to the outer box, so each place can size and dim its own slideshow.
+function PhotoSlideshow({ slides = HERO_SLIDES, intervalMs = HERO_INTERVAL_MS, className = '' }) {
   // which photo is showing now (its place in the list), and the one it is fading in over
   const [turn, setTurn] = useState({ current: 0, previous: null })
   const active = turn.current
@@ -60,26 +63,28 @@ function HeroSlideshow({ slides = HERO_SLIDES }) {
         // the old photo stays solid underneath while the new one fades in over it, so the middle of the fade does not go dark
         return next === state.current ? state : { current: next, previous: state.current }
       })
-    }, HERO_INTERVAL_MS)
+    }, intervalMs)
     return () => clearInterval(timer)
-  }, [reduced, failed, slides.length])
+  }, [reduced, failed, slides.length, intervalMs])
 
   // If the photo on screen fails, jump to a working one straight away
   const showing = failed[active] ? nextWorking(active, failed, slides.length) : active
   const onScreen = reduced ? 0 : showing
 
+  const classes = className ? `slideshow ${className}` : 'slideshow'
+
   return (
-    <div className="hero-slides" aria-hidden="true">
+    <div className={classes} aria-hidden="true">
       {slides.map((slide, index) => {
         // The first photo loads at once; the others get their address only after it has arrived
         const address = index === 0 || (restCanLoad && !reduced) ? slide.src : undefined
-        let classes = 'hero-slide'
-        if (index === onScreen && !failed[index]) classes += ' on'
-        else if (index === turn.previous && !reduced) classes += ' prev'
+        let slideClass = 'slideshow-slide'
+        if (index === onScreen && !failed[index]) slideClass += ' on'
+        else if (index === turn.previous && !reduced) slideClass += ' prev'
         return (
           <img
             key={slide.src}
-            className={classes}
+            className={slideClass}
             src={address}
             alt={slide.alt}
             loading={index === 0 ? 'eager' : 'lazy'}
@@ -94,10 +99,10 @@ function HeroSlideshow({ slides = HERO_SLIDES }) {
           />
         )
       })}
-      {/* A dark wash over the photos, darkest behind the words on the left, so the text reads clearly */}
-      <div className="hero-scrim" />
+      {/* A dark wash over the photos, so the words on top stay readable */}
+      <div className="slideshow-scrim" />
     </div>
   )
 }
 
-export default HeroSlideshow
+export default PhotoSlideshow

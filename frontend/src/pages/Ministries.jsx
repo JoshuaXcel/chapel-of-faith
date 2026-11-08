@@ -1,10 +1,15 @@
+// Ministries.jsx — the Ministries page: the CYF (youth) card with its photo slideshow,
+// the service units, the counselling area and the other ministries.
+// The CYF card is a slideshow with the words on top, built from the same PhotoSlideshow
+// component the Home page uses. Python comparison: a page component is like a FastAPI route
+// that builds one response from data it already has.
 import Button from '../components/Button.jsx'
 import Icon from '../components/Icon.jsx'
-import Photo from '../components/Photo.jsx'
+import PhotoSlideshow from '../components/PhotoSlideshow.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import ComingSoon from '../components/ComingSoon.jsx'
 import { allActivities, mainService, YOUTUBE_URL } from '../siteInfo.js'
-import choirPhoto from '../assets/photos/cyf-choir.jpg'
+import { CYF_SLIDES } from '../cyfSlides.js'
 
 // The CYF meeting from the weekly list in siteInfo.js (the item named "CYF…"),
 // so its day and time are only typed in one place
@@ -56,16 +61,14 @@ function Ministries() {
         lead="From the Chapel Youth Fellowship to counselling and service units, there is a way for everyone to grow and to serve."
       />
 
-      <section>
+      {/* The CYF card. The youth photos fill it and fade into each other behind the text,
+          so the heading, the times and the button all sit on top of the pictures. */}
+      <section className="cyf-section">
         <div className="wrap">
-          <div className="feature">
-            <Photo
-              src={choirPhoto}
-              alt="Members of the Chapel choir in robes, singing during a service"
-              caption="Photo: CYF fellowship"
-            />
-            <div className="fbody">
-              <span className="eyebrow">CYF · Chapel Youth Fellowship</span>
+          <div className="cyf-feature">
+            <PhotoSlideshow slides={CYF_SLIDES} className="cyf-slideshow" />
+            <div className="cyf-body">
+              <span className="eyebrow light">CYF · Chapel Youth Fellowship</span>
               <h2 className="mt16">Together we shall stand</h2>
               <p className="lead mt20">
                 The youth arm of the Chapel of Faith, FUTA: students growing in faith, gifts and
@@ -90,7 +93,7 @@ function Ministries() {
                 ))}
               </div>
               <div className="flex g12 mt40 wrapx">
-                <a className="btn btn-plum" href="#join">
+                <a className="btn btn-gold" href="#join">
                   Join CYF <Icon name="arrowRight" />
                 </a>
               </div>
