@@ -1,5 +1,7 @@
+# events.py: the routes for church events (list, one event, and admin create/edit/delete).
+# FastAPI idea: a router is a group of URL paths, like a Flask Blueprint.
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.clock import church_now
@@ -13,7 +15,11 @@ router = APIRouter(prefix="/events", tags=["events"])
 @router.get("", response_model=list[EventOut])
 def list_events(db: Session = Depends(get_db)):
     # church time, not the server's clock (see app/clock.py)
-    events = db.scalars(select(Event).where(Event.starts_at >= church_now()).order_by(Event.starts_at)).all()
+    now = church_now()
+    # an event is still on the list while it is running: it has started, but has not ended yet
+    # (ends_at is empty for many events, and an empty end time never matches, which is fine)
+    stmt = select(Event).where(or_(Event.starts_at >= now, Event.ends_at >= now)).order_by(Event.starts_at)
+    events = db.scalars(stmt).all()
     return events
 
 @router.get("/{event_id}", response_model=EventOut)
