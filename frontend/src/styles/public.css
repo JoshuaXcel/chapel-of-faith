@@ -635,6 +635,11 @@
   border-radius: 24px;
   padding: 32px;
 }
+/* A white form card can sit inside a dark section (.on-dark). Its grey notes must use
+   the normal grey, not the white-on-dark grey, or they vanish on the white card. */
+.formcard .muted {
+  color: var(--ink-3);
+}
 .sermon-row {
   grid-template-columns: 44px 1fr 170px 130px 110px;
 }
