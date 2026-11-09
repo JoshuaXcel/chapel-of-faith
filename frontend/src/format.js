@@ -51,9 +51,16 @@ export function monthYear(value) {
 }
 
 // Today's date as "2026-10-25" in the visitor's own time zone
+// "Today" for the church: the date in Africa/Lagos, not the date on the visitor's device.
+// A visitor abroad, near midnight, would otherwise see the wrong day's devotion.
+// The backend uses the same clock (backend/app/clock.py).
 export function todayString() {
-  const now = new Date()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${now.getFullYear()}-${month}-${day}`
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Africa/Lagos',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date())
+  const get = (type) => parts.find((part) => part.type === type).value
+  return `${get('year')}-${get('month')}-${get('day')}`
 }
