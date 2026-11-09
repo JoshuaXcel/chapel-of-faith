@@ -1,3 +1,6 @@
+// MobileMenu.jsx: the full-screen menu for phones. Navbar opens it from the menu button.
+// Escape closes it, focus moves into it on open and returns to the menu button on close.
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from './Icon.jsx'
 import { SOCIAL_LINKS, YOUTUBE_URL, mainService } from '../siteInfo.js'
@@ -20,6 +23,19 @@ const links = [
 // Full-screen menu for phones. Navbar shows it when the menu button is tapped.
 // Every link calls onClose, so the menu closes as the new page opens.
 function MobileMenu({ onClose }) {
+  // the close button, so keyboard users land inside the menu when it opens
+  const closeRef = useRef(null)
+
+  useEffect(() => {
+    closeRef.current?.focus()
+    // Escape closes the menu, as keyboard users expect from a dialog
+    function onKeyDown(event) {
+      if (event.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
+
   return (
     <div className="mm" role="dialog" aria-label="Menu">
       <div className="mm-bar">
@@ -30,7 +46,13 @@ function MobileMenu({ onClose }) {
             <span>FUTA · Akure</span>
           </span>
         </Link>
-        <button className="iconbtn mm-close" type="button" aria-label="Close menu" onClick={onClose}>
+        <button
+          ref={closeRef}
+          className="iconbtn mm-close"
+          type="button"
+          aria-label="Close menu"
+          onClick={onClose}
+        >
           <Icon name="close" />
         </button>
       </div>

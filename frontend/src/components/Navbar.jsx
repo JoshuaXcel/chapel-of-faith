@@ -1,4 +1,6 @@
-import { useState } from 'react'
+// Navbar.jsx: the top bar on every public page (logo, main links, Give, Watch live, and the
+// menu button that opens the phone menu). Focus returns to the menu button when the menu closes.
+import { useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Icon from './Icon.jsx'
 import MobileMenu from './MobileMenu.jsx'
@@ -18,6 +20,13 @@ const links = [
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  // the menu button, so focus goes back to it when the menu closes
+  const menuButtonRef = useRef(null)
+
+  function closeMenu() {
+    setMenuOpen(false)
+    menuButtonRef.current?.focus()
+  }
 
   return (
     <header className="hdr">
@@ -54,6 +63,7 @@ function Navbar() {
           </Link>
           {/* Only visible on phones (see Navbar.css) */}
           <button
+            ref={menuButtonRef}
             className="iconbtn menu-btn"
             type="button"
             aria-label="Open menu"
@@ -64,7 +74,7 @@ function Navbar() {
         </div>
       </div>
 
-      {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
+      {menuOpen && <MobileMenu onClose={closeMenu} />}
     </header>
   )
 }
