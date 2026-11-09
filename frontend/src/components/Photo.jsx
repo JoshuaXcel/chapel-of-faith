@@ -7,8 +7,11 @@ import Icon from './Icon.jsx'
 // instead, so a slot never shows a broken-image icon.
 // In plain terms: useState is like a Python variable the component remembers between redraws.
 function Photo({ src, alt = '', caption = 'Photo', dark = false, className = '' }) {
-  // true once the browser reports that this image could not be loaded
-  const [failed, setFailed] = useState(false)
+  // The address of the picture that failed to load (null when none has failed).
+  // Remembering the address, not just "failed", means a different picture given to
+  // this same box later gets its own try instead of staying as a placeholder.
+  const [failedSrc, setFailedSrc] = useState(null)
+  const failed = Boolean(src) && failedSrc === src
 
   let classes = 'ph'
   if (dark) classes += ' dark'
@@ -17,7 +20,7 @@ function Photo({ src, alt = '', caption = 'Photo', dark = false, className = '' 
   if (src && !failed) {
     return (
       <div className={classes}>
-        <img className="ph-img" src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+        <img className="ph-img" src={src} alt={alt} loading="lazy" onError={() => setFailedSrc(src)} />
       </div>
     )
   }
