@@ -28,7 +28,7 @@ Prepared for Joshua Mudana. Repo: JoshuaXcel/chapel-of-faith.
 ### 2. Phone menu: Escape did nothing, and keyboard focus stayed behind the menu
 
 - Where: the menu button and the full-screen phone menu (Navbar.jsx, MobileMenu.jsx).
-- How to see it: at 390 px, open the menu and press Escape. The menu stays open. Tab moves into the page behind it.
+- How to see it: at 390 px, open the menu and press Escape. The menu stays open. Keyboard focus moves into the page behind it.
 - Fix: Escape closes the menu. Focus moves to the close button when the menu opens, and back to the menu button when it closes. Touch and mouse behaviour is unchanged.
 - Commit on fix/site-review-nov-2026: "Phone menu: close on Escape and move focus in and back out".
 - Applies to: main and the pull request 23 head.
